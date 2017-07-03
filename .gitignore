@@ -1,0 +1,12 @@
+node_modules
+dist
+.tmp
+bower_components
+config.local.js
+.publish
+npm-debug.log
+gh-pages
+.idea
+.vscode
+build/*
+TODO.txt
