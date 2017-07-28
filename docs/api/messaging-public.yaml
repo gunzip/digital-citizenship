@@ -1,14 +1,14 @@
 swagger: "2.0"
 info:
   version: "0.0.1"
-  title: "Notifications API - public"
-  description: "Notifications API for service providers."
+  title: "Messaging API - public"
+  description: "Messaging API for service providers."
 host: "localhost:10010"
 basePath: "/api/v1"
 schemes:
   - "https"
 paths:
-  /specs/notifications-public:
+  /specs/messaging-public:
     x-swagger-pipe: swagger_raw
   /messages/{id}:
     x-swagger-router-controller: "Messages"
@@ -27,7 +27,7 @@ paths:
         200:
           description: "Message found."
           schema:
-            $ref: "notifications-common.yaml#/definitions/CreatedMessage"
+            $ref: "messaging-common.yaml#/definitions/CreatedMessage"
           examples: {}
         404:
           description: "No message found for the provided ID."
@@ -52,7 +52,7 @@ paths:
           name: "message"
           in: "body"
           schema:
-            $ref: "notifications-common.yaml#/definitions/NewMessage"
+            $ref: "messaging-common.yaml#/definitions/NewMessage"
       responses:
         201:
           description: "Message created."
@@ -64,7 +64,7 @@ paths:
                     type: "string"
                     format: "uuid"
                   status:
-                    $ref: "notifications-common.yaml#/definitions/MessageStatus"
+                    $ref: "messaging-common.yaml#/definitions/MessageStatus"
                 required:
                   - "id"
                   - "status"
@@ -77,12 +77,12 @@ paths:
         400:
           description: "Invalid payload."
           schema:
-            $ref: "notifications-common.yaml#/definitions/ProblemJson"
+            $ref: "messaging-common.yaml#/definitions/ProblemJson"
           examples: {}
         500:
           description: "The message cannot be delivered."
           schema:
-            $ref: "notifications-common.yaml#/definitions/ProblemJson"
+            $ref: "messaging-common.yaml#/definitions/ProblemJson"
 consumes:
   - "application/json"
 produces:

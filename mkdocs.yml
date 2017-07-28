@@ -7,8 +7,8 @@ pages:
 theme: readthedocs
 strict: true
 extra_templates:
-    - api/notifications.html
+    - api/messaging.html
     - api/preferences.html
-    - api/notifications-common.yaml
-    - api/notifications-public.yaml
+    - api/messaging-common.yaml
+    - api/messaging-public.yaml
     - api/preferences.yaml

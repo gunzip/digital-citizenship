@@ -83,7 +83,7 @@ Activity feed reference implementation:
 
 - looks very good but cannot install on small vm
 
-## Notifications API
+## Messaging API
 
 ### Existing APIs for messaging
 

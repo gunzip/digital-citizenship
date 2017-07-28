@@ -1,10 +1,10 @@
 swagger: "2.0"
 info:
   version: "0.0.1"
-  title: "Notifications API - private"
-  description: "Notifications API for the service owner."
+  title: "Messaging API - private"
+  description: "Messaging API for the service owner."
   x-stoplight:
-    id: "gunzip/specs/notifications-api-private"
+    id: "gunzip/specs/messaging-api-private"
 host: "localhost"
 basePath: "/api/v1"
 schemes:
@@ -27,7 +27,7 @@ paths:
         200:
           description: "Message found."
           schema:
-            $ref: "notifications-common.yaml#/definitions/CreatedMessage"
+            $ref: "messaging-common.yaml#/definitions/CreatedMessage"
           examples: {}
         404:
           description: "No message found for the provided ID."
@@ -35,7 +35,7 @@ paths:
     x-swagger-router-controller: "Messages"
     parameters:
       -
-        $ref: "notifications-common.yaml#/parameters/PaginationRequest"
+        $ref: "messaging-common.yaml#/parameters/PaginationRequest"
       -
         name: "fiscal_code"
         in: "path"
@@ -60,9 +60,9 @@ paths:
                   items:
                     type: "array"
                     items:
-                      $ref: "notifications-common.yaml#/definitions/CreatedMessage"
+                      $ref: "messaging-common.yaml#/definitions/CreatedMessage"
               -
-                $ref: "notifications-common.yaml#/definitions/PaginationResponse"
+                $ref: "messaging-common.yaml#/definitions/PaginationResponse"
         404:
           description: "No message found."
       parameters: []

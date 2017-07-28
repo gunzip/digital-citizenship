@@ -45,7 +45,7 @@ The citizen therefore has no direct access to the system: the information system
 
 ### Related APIs
 
-- [Notifications API](api/notifications.html)
+- [Messaging API](api/messaging.html)
 
 ## Preferences
 
@@ -82,5 +82,5 @@ Through this information, SGP provides the consulting authorities with the oppor
 
 ## API docs
 
-- [Notifications API](api/notifications.html)
+- [Messaging API](api/messaging.html)
 - [Preferences API](api/preferences.html)

@@ -12,7 +12,7 @@ This repository is configured for Nat Pryce's [_adr-tools_](https://github.com/n
 
 ### API definitions
 
-- [Notifications API](https://teamdigitale.github.io/cittadinanza-digitale/api/notifications.html)
+- [Messaging API](https://teamdigitale.github.io/cittadinanza-digitale/api/messaging.html)
 - [Preferences API](https://teamdigitale.github.io/cittadinanza-digitale/api/preferences.html)
 
 ## Usage

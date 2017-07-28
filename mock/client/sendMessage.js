@@ -1,5 +1,5 @@
 /**
- * Example client for Notifications API.
+ * Example client for Messaging API.
  * 
  * Submits a message for delivery.
  */
@@ -15,7 +15,7 @@ data.insert()
 
 const sendMessage = (fiscal_code, message) => {
   var options = {
-    uri: `${config.NOTIFICATION_API_URL}/users/${fiscal_code}/messages`,
+    uri: `${config.MESSAGING_API_URL}/users/${fiscal_code}/messages`,
     method: 'POST',
     json: message
   }

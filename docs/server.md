@@ -26,11 +26,11 @@ to run the test environment with preloaded fixtures (ie. sample fake user data)
 and a in-memory database that lets you play with the APIs.
 
 Two HTTP server are started on differents ports: one serves the Preferences API
-while the other one serves the Notifications API:
+while the other one serves the Messaging API:
 
 ```
 Serving ../docs/api/preferences.yaml API on http://localhost:10011
-Serving ../docs/api/notifications-public.yaml API on http://localhost:10010
+Serving ../docs/api/messaging-public.yaml API on http://localhost:10010
 ```
 
 ## Testing the APIs

@@ -15,7 +15,7 @@ const SWAGGER_UI_PATH = '/swagger-ui'
 const DEFAULT_API_PORT = 8081
 
 const APIs = [
-  '../docs/api/notifications-public.yaml',
+  '../docs/api/messaging-public.yaml',
   '../docs/api/preferences.yaml'
 ]
 
