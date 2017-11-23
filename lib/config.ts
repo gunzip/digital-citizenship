@@ -19,7 +19,7 @@ function failIfEmpty(
 interface IApiDescription {
   readonly id: string;
   readonly api: {
-    readonly contentValue: string;
+    readonly specsPath: string;
     readonly displayName: string;
     readonly path: string;
   };

@@ -13,14 +13,15 @@
 // tslint:disable:no-any
 
 import { login } from "../../lib/login";
+import { getFunctionsInfo } from "../../lib/utils";
 
 import readConfig from "../../lib/config";
 const config = readConfig(__dirname + "/../tfvars.json");
 
 import apiManagementClient = require("azure-arm-apimanagement");
 import webSiteManagementClient = require("azure-arm-website");
+
 import * as path from "path";
-import * as request from "request";
 import * as shelljs from "shelljs";
 import * as tmp from "tmp";
 import * as url from "url";
@@ -39,40 +40,6 @@ const addDays = (date: Date, days: number) => {
   const result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
-};
-
-/**
- * Get Functions (app service) backend URL and master key
- * to set up API manager properties (backend).
- */
-const getFunctionsInfo = async (webClient: webSiteManagementClient) => {
-  const functions = await webClient.webApps.get(
-    config.azurerm_resource_group,
-    config.azurerm_functionapp
-  );
-  const creds = await webClient.webApps.listPublishingCredentials(
-    config.azurerm_resource_group,
-    config.azurerm_functionapp
-  );
-  const backendUrl = `https://${functions.defaultHostName}`;
-
-  // @FIXME: unfortunately there is no API to get a Functions App master key
-  const secretUrl = url.format({
-    auth: `${creds.publishingUserName}:${creds.publishingPassword}`,
-    host: `${config.azurerm_functionapp}.scm.azurewebsites.net`,
-    pathname: "/api/functions/admin/masterkey",
-    protocol: "https"
-  });
-
-  const masterKey = await new Promise<string>((resolve, reject) =>
-    request.get(secretUrl, (err, __, body) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(JSON.parse(body).masterKey);
-    })
-  );
-  return { masterKey, backendUrl };
 };
 
 const setApimProperties = async (
@@ -187,7 +154,10 @@ export const run = async () => {
     loginCreds.creds as any,
     loginCreds.subscriptionId
   );
-  const { masterKey, backendUrl } = await getFunctionsInfo(webSiteClient);
+  const { masterKey, backendUrl } = await getFunctionsInfo(
+    config,
+    webSiteClient
+  );
 
   // Set up backend url and code (master key) to access Functions
   await setApimProperties(apiClient, {

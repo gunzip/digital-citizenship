@@ -36,12 +36,22 @@
     {
       "id": "digital-citizenship-api",
       "api": {
-        "contentValue": "https://",
+        "specsPath": "/api/v1/swagger.json",
         "displayName": "Digital Citizenship API",
         "path": "/api/v1"
       },
-      "producs": ["starter"],
-      "policyFile": "policies/public.xml"
+      "products": ["starter"],
+      "policyFile": "public.xml"
+    },
+    {
+      "id": "digital-citizenship-admin",
+      "api": {
+        "specsPath": "/adm/swagger.json",
+        "displayName": "Digital Citizenship Admin API",
+        "path": "/"
+      },
+      "products": ["starter"],
+      "policyFile": "admin.xml"
     }
   ],
   "message_blob_container": "message-content"
