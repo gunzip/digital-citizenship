@@ -16,6 +16,17 @@ function failIfEmpty(
   return what;
 }
 
+interface IApiDescription {
+  readonly id: string;
+  readonly api: {
+    readonly contentValue: string;
+    readonly displayName: string;
+    readonly path: string;
+  };
+  readonly products: ReadonlyArray<string>;
+  readonly policyFile: string;
+}
+
 export interface IResourcesConfiguration {
   readonly environment: string;
   readonly location: string;
@@ -47,6 +58,7 @@ export interface IResourcesConfiguration {
   readonly apim_sku: string;
   readonly apim_scm_username: string;
   readonly apim_scm_cred_username: string;
+  readonly apim_apis: ReadonlyArray<IApiDescription>;
   readonly message_blob_container: string;
 }
 
@@ -78,6 +90,7 @@ export default (filePath: string): IResourcesConfiguration => {
     config.azurerm_application_insights,
     config.azurerm_log_analytics,
     config.azurerm_apim,
+    config.apim_apis,
     config.apim_email,
     config.apim_publisher,
     config.apim_sku,

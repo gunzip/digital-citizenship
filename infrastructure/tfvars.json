@@ -32,5 +32,17 @@
   "apim_sku": "Developer",
   "apim_scm_username": "apim",
   "apim_scm_cred_username": "git",
+  "apim_apis": [
+    {
+      "id": "digital-citizenship-api",
+      "api": {
+        "contentValue": "https://",
+        "displayName": "Digital Citizenship API",
+        "path": "/api/v1"
+      },
+      "producs": ["starter"],
+      "policyFile": "policies/public.xml"
+    }
+  ],
   "message_blob_container": "message-content"
 }
