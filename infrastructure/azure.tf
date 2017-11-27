@@ -67,6 +67,16 @@ variable "azurerm_app_service_plan" {
     type = "string"
 }
 
+# Name of the App Service Plan for developer portal
+variable "azurerm_app_service_plan_portal" {
+    type = "string"
+}
+
+# Name of the App Service for developer portal
+variable "azurerm_app_service_portal" {
+    type = "string"
+}
+
 # Name of Application Insights resource
 variable "azurerm_application_insights" {
     type = "string"
@@ -216,6 +226,62 @@ resource "azurerm_app_service_plan" "azurerm_app_service_plan" {
     # provisioner "local-exec" {
     #    command = "ts-node ./tasks/functions.ts"
     # }
+}
+
+### DEVELOPER PORTAL TASKS
+
+resource "azurerm_app_service_plan" "azurerm_app_service_plan_portal" {
+    name                = "${var.azurerm_app_service_plan_portal}"
+    location            = "${azurerm_resource_group.azurerm_resource_group.location}"
+    resource_group_name = "${azurerm_resource_group.azurerm_resource_group.name}"
+
+    sku {
+        tier = "Standard"
+        # Possible values are B1, B2, B3, D1, F1, FREE, P1, P2, P3, S1, S2, S3, SHARED
+        size = "S1"
+    }
+}
+
+resource "random_string" "cookie_key" {
+  length = 32
+}
+
+resource "random_string" "cookie_iv" {
+  length = 12
+}
+
+resource "azurerm_app_service" "azurerm_app_service_portal" {
+    name                = "${var.azurerm_app_service_portal}"
+    location            = "${azurerm_resource_group.azurerm_resource_group.location}"
+    resource_group_name = "${azurerm_resource_group.azurerm_resource_group.name}"
+    app_service_plan_id = "${azurerm_app_service_plan.azurerm_app_service_plan_portal.id}"
+
+    site_config {
+        always_on = true
+    }
+
+    # Go to https://github.com/teamdigitale/digital-citizenship-onboarding
+    # to see how to fill these values
+    app_settings {
+        ARM_SUBSCRIPTION_ID = ""
+        ADMIN_API_KEY = ""
+        CLIENT_ID = ""
+        CLIENT_SECRET = ""
+        POLICY_NAME = "${var.azurerm_app_service_portal_policy}"
+        TENANT_ID = "${var.azurerm_app_service_portal_tenant}"
+        WEBSITE_NODE_DEFAULT_VERSION = "6.5.0"
+        COOKIE_KEY = "${random_string.cookie_key}"
+        COOKIE_IV = "${random_string.cookie_iv}"
+        LOG_LEVEL = "info"
+        ARM_RESOURCE_GROUP = "${azurerm_resource_group.azurerm_resource_group.name}"
+        ARM_APIM = "${var.azurerm_apim}"
+        APIM_PRODUCT_NAME = "starter"
+        APIM_USER_GROUPS = "ApiLimitedMessageWrite,ApiInfoRead,ApiMessageRead"
+        ADMIN_API_URL = "https://${var.azurerm_apim}.azure-api.net/"
+        POST_LOGIN_URL = "https://${var.azurerm_apim}.portal.azure-api.net/developer"
+        POST_LOGOUT_URL = "https://${var.azurerm_apim}.portal.azure-api.net/"
+        REPLY_URL = "https://${var.azurerm_app_service_portal}.azurewebsites.net/auth/openid/return"
+    }
 }
 
 ## !!! API MANAGER NOT SUPPORTED

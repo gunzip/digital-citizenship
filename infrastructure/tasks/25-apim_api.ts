@@ -10,10 +10,9 @@
  * without the need to push the whole local git repository which
  * contains the API management configuration (ie. site templates).
  * 
- * By default only API operations (ie. GET, POST) are synched.
- * 
- * To sync policies and products use the following environment variables:
- * ADD_API_TO_PRODUCTS=1 ADD_API_TO_POLICY=1
+ * By default only API operations, products and policies are synched.
+ * To avoid sync policies and products use the following environment variables:
+ * SKIP_PRODUCTS=1 SKIP_POLICIES=1
  *
  * $ ts-node apim_api.ts
  *
@@ -42,10 +41,10 @@ import * as path from "path";
 // retrieved from the Functions OpenAPI endpoint(s) to the API management ones,
 // it's far less safe to add API to products or/and to modify API policies: these tasks are commonly run
 // using the Azure portal interface (web UI), so the risk of overriding already modified settings is high.
-// For this reason we provide a default behavior for this task (just sync the API operations)
-// and opt-in environment variables to sync API products and policies as well.
-const ADD_API_TO_PRODUCTS = process.env.ADD_API_TO_PRODUCTS;
-const ADD_API_TO_POLICY = process.env.ADD_API_TO_POLICY;
+// For this reason we provide a default behavior for this task (sync API, products and policies)
+// and opt-out environment variables to prevent synching API products and policies.
+const SKIP_API_PRODUCTS = process.env.SKIP_API_PRODUCTS;
+const SKIP_API_POLICIES = process.env.SKIP_API_POLICIES;
 
 export const run = async (config: IResourcesConfiguration) => {
   const loginCreds = await login();
@@ -55,19 +54,25 @@ export const run = async (config: IResourcesConfiguration) => {
     loginCreds.subscriptionId
   );
 
+  // Get OpenAPI specs path and code (masterKey) from Functions
+  const webSiteClient = new webSiteManagementClient(
+    loginCreds.creds as any,
+    loginCreds.subscriptionId
+  );
+
+  const { masterKey, backendUrl } = await getFunctionsInfo(
+    config,
+    webSiteClient
+  );
+
   return Promise.all(
     config.apim_apis.map(async apiEntry => {
-      // Get OpenAPI specs path and code (masterKey) from Functions
-      const webSiteClient = new webSiteManagementClient(
-        loginCreds.creds as any,
-        loginCreds.subscriptionId
-      );
-      const { masterKey, backendUrl } = await getFunctionsInfo(
-        config,
-        webSiteClient
-      );
       const contentValue = `${backendUrl}${apiEntry.api
         .specsPath}?code=${masterKey}`;
+
+      console.log(
+        `Adding API from URL: ${backendUrl}${apiEntry.api.specsPath}`
+      );
 
       // Add API to API management
       await apiClient.api.createOrUpdate(
@@ -88,7 +93,7 @@ export const run = async (config: IResourcesConfiguration) => {
         }
       );
       // Add API to products
-      if (ADD_API_TO_PRODUCTS) {
+      if (!SKIP_API_PRODUCTS) {
         await Promise.all(
           apiEntry.products.map(async product => {
             await apiClient.productApi.createOrUpdate(
@@ -101,7 +106,7 @@ export const run = async (config: IResourcesConfiguration) => {
         );
       }
       // Add a policy to the API reading it from a file
-      if (ADD_API_TO_POLICY && apiEntry.policyFile) {
+      if (!SKIP_API_POLICIES && apiEntry.policyFile) {
         const policyContent = fs.readFileSync(
           path.join(__dirname, "..", "api-policies", apiEntry.policyFile),
           "utf8"
