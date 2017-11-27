@@ -1,6 +1,19 @@
 /**
  * Run this task from the command line to sync the API Manager APIs
  * from the OpenAPI specs (operations) exposed by Functions.
+ * 
+ * In this way the API management can let HTTP requests pass through
+ * when they match the synched API operations. Otherwise it will 
+ * return "404 not found" for every request.
+ * 
+ * This task lets you synchronize API operations, products and policies
+ * without the need to push the whole local git repository which
+ * contains the API management configuration (ie. site templates).
+ * 
+ * By default only API operations (ie. GET, POST) are synched.
+ * 
+ * To sync policies and products use the following environment variables:
+ * ADD_API_TO_PRODUCTS=1 ADD_API_TO_POLICY=1
  *
  * $ ts-node apim_api.ts
  *
