@@ -16,8 +16,7 @@
 
 import { login } from "../../lib/login";
 
-import readConfig from "../../lib/config";
-const config = readConfig(__dirname + "/../tfvars.json");
+import { IResourcesConfiguration, readConfig } from "../../lib/config";
 
 import storageManagementClient = require("azure-arm-storage");
 import webSiteManagementClient = require("azure-arm-website");
@@ -25,14 +24,20 @@ import webSiteManagementClient = require("azure-arm-website");
 import AppInsights = require("azure-arm-appinsights");
 import CosmosDBManagementClient = require("azure-arm-cosmosdb");
 
-const getAppServicePlan = async (client: any) => {
+const getAppServicePlan = async (
+  client: any,
+  config: IResourcesConfiguration
+) => {
   return await client.appServicePlans.get(
     config.azurerm_resource_group,
     config.azurerm_app_service_plan
   );
 };
 
-const getAppInsightsKey = async (appInsightsClient: AppInsights) => {
+const getAppInsightsKey = async (
+  appInsightsClient: AppInsights,
+  config: IResourcesConfiguration
+) => {
   const appInsightsInstance = await appInsightsClient.components.get(
     config.azurerm_resource_group,
     config.azurerm_application_insights
@@ -40,7 +45,7 @@ const getAppInsightsKey = async (appInsightsClient: AppInsights) => {
   return appInsightsInstance.instrumentationKey;
 };
 
-export const run = async () => {
+export const run = async (config: IResourcesConfiguration) => {
   const loginCreds = await login();
 
   // Get AppInsights instrumentation key
@@ -48,7 +53,7 @@ export const run = async () => {
     loginCreds.creds as any,
     loginCreds.subscriptionId
   );
-  const appInsightsKey = await getAppInsightsKey(appInsightsClient);
+  const appInsightsKey = await getAppInsightsKey(appInsightsClient, config);
 
   // Needed to get storage account connection string
   const storageClient = new storageManagementClient(
@@ -86,7 +91,7 @@ export const run = async () => {
     loginCreds.creds as any,
     loginCreds.subscriptionId
   );
-  const servicePlan = await getAppServicePlan(webSiteClient);
+  const servicePlan = await getAppServicePlan(webSiteClient, config);
 
   const appConfig = {
     kind: "functionapp",
@@ -178,6 +183,7 @@ export const run = async () => {
   }
 };
 
-run()
+readConfig(process.env.ENVIRONMENT)
+  .then(run)
   .then(() => console.log("successfully deployed functions"))
-  .catch(console.error);
+  .catch((e: Error) => console.error(process.env.VERBOSE ? e : e.message));

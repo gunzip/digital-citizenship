@@ -1,7 +1,7 @@
 /**
  * Run this task to sync Azure Functions staging slot
  * to the source control repository code branch
- * specified in the configuration file (`tfvars.json`).
+ * specified in the configuration file.
  * 
  * This is equivalent to push the "Sync" button in the
  * Azure portal -> Functions -> Deployments blade.
@@ -16,12 +16,11 @@
 
 import { login } from "../../lib/login";
 
-import readConfig from "../../lib/config";
-const config = readConfig(__dirname + "/../tfvars.json");
+import { IResourcesConfiguration, readConfig } from "../../lib/config";
 
 import webSiteManagementClient = require("azure-arm-website");
 
-export const run = async () => {
+export const run = async (config: IResourcesConfiguration) => {
   if (!config.functionapp_git_repo) {
     return Promise.reject(
       "Deployment from source control repository not configured"
@@ -41,10 +40,11 @@ export const run = async () => {
   );
 };
 
-run()
+readConfig(process.env.ENVIRONMENT)
+  .then(run)
   .then(r => {
     if (r) {
       console.log("Successfully synced functions with source control");
     }
   })
-  .catch(console.error);
+  .catch((e: Error) => console.error(process.env.VERBOSE ? e : e.message));

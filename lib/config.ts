@@ -6,15 +6,28 @@
 // tslint:disable:object-literal-sort-keys
 
 import * as fs from "fs";
+import * as path from "path";
+import * as readlineSync from "readline-sync";
+
+// configuration file to feed terraform settings
+const TF_VARS_FILE_NAME = "tfvars.json";
+
+// configuration file with variables used from tasks
+const COMMON_CONFIG_FILE_NAME = "config.json";
 
 function failIfEmpty(
-  what: string | ReadonlyArray<any>
+  key: string,
+  value: string | ReadonlyArray<any>
 ): string | ReadonlyArray<any> {
-  if (!what) {
-    throw new TypeError("empty parameter not allowed in configuration file");
+  if (!value) {
+    throw new TypeError(
+      `empty parameter not allowed in configuration file: ${key}`
+    );
   }
-  return what;
+  return key;
 }
+
+type Partial<T> = { [P in keyof T]?: T[P] };
 
 interface IApiDescription {
   readonly id: string;
@@ -60,44 +73,102 @@ export interface IResourcesConfiguration {
   readonly apim_scm_cred_username: string;
   readonly apim_apis: ReadonlyArray<IApiDescription>;
   readonly message_blob_container: string;
+  readonly azure_portal_ips: ReadonlyArray<string>;
 }
 
 /**
- * Parses a configuration file.
+ * Merge and parses configuration files.
  * Throws an Exception and exit on any kind of error.
  */
-export default (filePath: string): IResourcesConfiguration => {
-  const config = JSON.parse(
-    fs.readFileSync(filePath, "utf8")
-  ) as IResourcesConfiguration;
-  [
-    config.environment,
-    config.location,
-    config.cosmosdb_failover_location,
-    config.azurerm_resource_group,
-    config.azurerm_storage_account,
-    config.azurerm_storage_container,
-    config.azurerm_storage_queue_emailnotifications,
-    config.azurerm_storage_queue_createdmessages,
-    config.azurerm_cosmosdb,
-    config.azurerm_cosmosdb_documentdb,
-    config.azurerm_cosmosdb_collections,
-    config.azurerm_app_service_plan,
-    config.azurerm_functionapp,
-    config.azurerm_functionapp_slot,
-    config.functionapp_nodejs_version,
-    config.azurerm_functionapp_storage_account,
-    config.azurerm_application_insights,
-    config.azurerm_log_analytics,
-    config.azurerm_apim,
-    config.apim_apis,
-    config.apim_email,
-    config.apim_publisher,
-    config.apim_sku,
-    config.apim_scm_username,
-    config.apim_scm_cred_username,
-    config.message_blob_container
-  ].forEach(failIfEmpty);
+export const readConfig = (
+  environment: string
+): Promise<IResourcesConfiguration> => {
+  return new Promise(resolve => {
+    if (!environment) {
+      throw new Error("Please set ENVIRONMENT variable");
+    }
 
-  return config;
+    const tfFilePath = path.join(
+      __dirname,
+      "..",
+      "infrastructure",
+      "env",
+      environment,
+      TF_VARS_FILE_NAME
+    );
+    if (!fs.existsSync(tfFilePath)) {
+      throw new Error("Cannot find configuration file: " + tfFilePath);
+    }
+    const tfConfig = JSON.parse(fs.readFileSync(tfFilePath, "utf8"));
+
+    const commonConfigFilePath = path.join(
+      "",
+      __dirname,
+      "..",
+      "infrastructure",
+      "env",
+      "common",
+      COMMON_CONFIG_FILE_NAME
+    );
+    if (!fs.existsSync(commonConfigFilePath)) {
+      throw new Error(
+        "Cannot find configuration file: " + commonConfigFilePath
+      );
+    }
+    const commonConfig = JSON.parse(
+      fs.readFileSync(commonConfigFilePath, "utf8")
+    );
+
+    const config = { ...commonConfig, ...tfConfig } as IResourcesConfiguration;
+
+    // tslint:disable-next-line:no-console
+    console.log(config);
+
+    const checkConfig: Partial<IResourcesConfiguration> = {
+      environment: config.environment,
+      location: config.location,
+      cosmosdb_failover_location: config.cosmosdb_failover_location,
+      azurerm_resource_group: config.azurerm_resource_group,
+      azurerm_storage_account: config.azurerm_storage_account,
+      azurerm_storage_container: config.azurerm_storage_container,
+      azurerm_storage_queue_emailnotifications:
+        config.azurerm_storage_queue_emailnotifications,
+      azurerm_storage_queue_createdmessages:
+        config.azurerm_storage_queue_createdmessages,
+      azurerm_cosmosdb: config.azurerm_cosmosdb,
+      azurerm_cosmosdb_documentdb: config.azurerm_cosmosdb_documentdb,
+      azurerm_cosmosdb_collections: config.azurerm_cosmosdb_collections,
+      azurerm_app_service_plan: config.azurerm_app_service_plan,
+      azurerm_functionapp: config.azurerm_functionapp,
+      azurerm_functionapp_slot: config.azurerm_functionapp_slot,
+      functionapp_nodejs_version: config.functionapp_nodejs_version,
+      azurerm_functionapp_storage_account:
+        config.azurerm_functionapp_storage_account,
+      azurerm_application_insights: config.azurerm_application_insights,
+      azurerm_log_analytics: config.azurerm_log_analytics,
+      azurerm_apim: config.azurerm_apim,
+      apim_apis: config.apim_apis,
+      apim_email: config.apim_email,
+      apim_publisher: config.apim_publisher,
+      apim_sku: config.apim_sku,
+      apim_scm_username: config.apim_scm_username,
+      apim_scm_cred_username: config.apim_scm_cred_username,
+      message_blob_container: config.message_blob_container,
+      azure_portal_ips: config.azure_portal_ips
+    };
+
+    Object.keys(checkConfig).forEach(k =>
+      failIfEmpty(k, (checkConfig as any)[k])
+    );
+
+    if (
+      !readlineSync.keyInYNStrict(
+        `Do you want to proceed with this configuration (${environment}) ?`
+      )
+    ) {
+      throw new Error("Aborted.");
+    }
+
+    return resolve(config);
+  });
 };

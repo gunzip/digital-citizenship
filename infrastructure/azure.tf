@@ -5,10 +5,9 @@
 # You *must* create the storage account and the container before running this script
 terraform {
  backend "azurerm" {
-   resource_group_name  = "terraform-resource-group"
-   storage_account_name = "terraformstorageaccount"
-   container_name       = "terraform-storage-container"
-   key                  = "production.terraform.tfstate"
+    resource_group_name  = "terraform-resource-group"
+    storage_account_name = "terraformstorageaccount"
+    container_name       = "terraform-storage-container"     
  }
 }
 

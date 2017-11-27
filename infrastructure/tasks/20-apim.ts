@@ -13,10 +13,9 @@
 // tslint:disable:no-any
 
 import { login } from "../../lib/login";
-import { getFunctionsInfo } from "../../lib/utils";
+import { getFunctionsInfo } from "../../lib/task_utils";
 
-import readConfig from "../../lib/config";
-const config = readConfig(__dirname + "/../tfvars.json");
+import { IResourcesConfiguration, readConfig } from "../../lib/config";
 
 import apiManagementClient = require("azure-arm-apimanagement");
 import webSiteManagementClient = require("azure-arm-website");
@@ -46,7 +45,8 @@ const setApimProperties = async (
   apiClient: apiManagementClient,
   properties: {
     readonly [s: string]: { readonly secret: boolean; readonly value: string };
-  }
+  },
+  config: IResourcesConfiguration
 ) => {
   return await Promise.all(
     Object.keys(properties).map(async prop => {
@@ -71,7 +71,8 @@ const setApimProperties = async (
 const setupConfigurationFromGit = async (
   apiClient: apiManagementClient,
   scmUrl: string,
-  configurationDirectoryPath: string
+  configurationDirectoryPath: string,
+  config: IResourcesConfiguration
 ) => {
   // TODO: Save old configuration to snapshot branch
 
@@ -127,7 +128,7 @@ const setupConfigurationFromGit = async (
   return gitKey;
 };
 
-export const run = async () => {
+export const run = async (config: IResourcesConfiguration) => {
   const loginCreds = await login();
 
   // Needed to get storage connection string
@@ -160,10 +161,14 @@ export const run = async () => {
   );
 
   // Set up backend url and code (master key) to access Functions
-  await setApimProperties(apiClient, {
-    backendUrl: { secret: false, value: backendUrl },
-    code: { secret: true, value: masterKey }
-  });
+  await setApimProperties(
+    apiClient,
+    {
+      backendUrl: { secret: false, value: backendUrl },
+      code: { secret: true, value: masterKey }
+    },
+    config
+  );
 
   if (!apiManagementService.scmUrl) {
     throw new Error("Cannot get apiManagementService.scmUrl");
@@ -172,7 +177,8 @@ export const run = async () => {
   return setupConfigurationFromGit(
     apiClient,
     apiManagementService.scmUrl,
-    CONFIGURATION_DIRECTORY_PATH
+    CONFIGURATION_DIRECTORY_PATH,
+    config
   );
 
   // Configure ADB2C authentication
@@ -184,6 +190,7 @@ export const run = async () => {
 //  https://docs.microsoft.com/it-it/rest/api/apimanagement/Logger/CreateOrUpdate
 //  or log analytics (or storage)
 
-run()
+readConfig(process.env.ENVIRONMENT)
+  .then(run)
   .then(() => console.log("successfully deployed api manager"))
-  .catch(console.error);
+  .catch((e: Error) => console.error(process.env.VERBOSE ? e : e.message));

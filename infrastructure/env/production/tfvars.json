@@ -1,0 +1,20 @@
+{
+  "environment": "production",
+  "location": "West Europe",
+  "cosmosdb_failover_location": "North Europe",
+  "azurerm_resource_group": "agid-rg-prod",
+  "azurerm_storage_account": "agidstorageprod",
+  "azurerm_storage_container": "agid-storage-prod",
+  "azurerm_storage_queue_emailnotifications": "emailnotifications",
+  "azurerm_storage_queue_createdmessages": "createdmessages",
+  "azurerm_cosmosdb": "agid-cosmosdb-prod",
+  "azurerm_cosmosdb_documentdb": "agid-documentdb-prod",
+  "azurerm_app_service_plan": "agid-app-prod",
+  "azurerm_functionapp": "agid-functions-prod",
+  "azurerm_functionapp_slot": "agid-functions-staging",
+  "azurerm_functionapp_storage_account": "agidfuncstorageprod",
+  "azurerm_application_insights": "agid-appinsights-prod",
+  "azurerm_log_analytics": "agid-loganalytics-prod",
+  "azurerm_apim": "agid-apim-prod",
+  "apim_sku": "Developer"
+}

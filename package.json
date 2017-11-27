@@ -17,16 +17,19 @@
     "docs:deploy": "gh-pages -t -d site",
     "docs:publish": "npm-run-all docs:build docs:nojekyll docs:api docs:deploy",
     "resources:tf-init":
-      "terraform init -var-file=infrastructure/tfvars.json infrastructure",
+      "cross-var terraform init -var-file=infrastructure/env/$ENVIRONMENT/tfvars.json -backend-config=infrastructure/env/$ENVIRONMENT/backend.tf infrastructure",
     "resources:tf-plan":
-      "terraform plan -var-file=infrastructure/tfvars.json infrastructure",
+      "cross-var terraform plan -var-file=infrastructure/env/$ENVIRONMENT/tfvars.json infrastructure",
     "resources:tf-apply":
-      "terraform apply -var-file=infrastructure/tfvars.json infrastructure",
-    "resources:api": "ts-node infrastructure/tasks/20-apim.ts",
+      "cross-var terraform apply -var-file=infrastructure/env/$ENVIRONMENT/tfvars.json infrastructure",
+    "resources:apim": "ts-node infrastructure/tasks/20-apim.ts",
+    "resources:apim:api": "ts-node infrastructure/tasks/25-apim_api.ts",
     "resources:functions": "ts-node infrastructure/tasks/10-functions.ts",
+    "resources:functions:sync":
+      "ts-node infrastructure/tasks/15-functions_sync.ts",
     "resources:cosmosdb": "ts-node infrastructure/tasks/00-cosmosdb.ts",
     "resources:deploy":
-      "npm-run-all resources:tf-init resources:tf-apply resources:cosmosdb resources:functions resources:api"
+      "npm-run-all resources:tf-init resources:tf-apply resources:cosmosdb resources:functions resources:functions:sync resources:apim resources:apim:api"
   },
   "devDependencies": {
     "@types/documentdb": "^1.10.2",
@@ -54,6 +57,9 @@
     "tslint-config-prettier": "^1.5.0",
     "tslint-immutable": "^4.1.0",
     "tslint-plugin-prettier": "^1.2.0",
-    "typescript": "^2.5.2"
+    "typescript": "^2.5.2",
+    "@types/readline-sync": "^1.4.2",
+    "cross-var": "^1.1.0",
+    "readline-sync": "^1.4.7"
   }
 }

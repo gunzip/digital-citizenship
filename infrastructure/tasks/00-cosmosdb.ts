@@ -11,8 +11,7 @@
 
 import { login } from "../../lib/login";
 
-import readConfig from "../../lib/config";
-const config = readConfig(__dirname + "/../tfvars.json");
+import { IResourcesConfiguration, readConfig } from "../../lib/config";
 
 import CosmosDBManagementClient = require("azure-arm-cosmosdb");
 import * as documentdb from "documentdb";
@@ -105,7 +104,7 @@ const createCollectionIfNotExists = (
   });
 };
 
-export const run = async () => {
+export const run = async (config: IResourcesConfiguration) => {
   const loginCreds = await login();
 
   const client = new CosmosDBManagementClient(
@@ -146,8 +145,9 @@ export const run = async () => {
   );
 };
 
-run()
+readConfig(process.env.ENVIRONMENT)
+  .then(run)
   .then(() =>
     console.log("successfully deployed cosmsodb database and collections")
   )
-  .catch(console.error);
+  .catch((e: Error) => console.error(process.env.VERBOSE ? e : e.message));

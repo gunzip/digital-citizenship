@@ -7,3 +7,4 @@ site
 local.*
 npm-debug.log
 build
+yarn-error.log

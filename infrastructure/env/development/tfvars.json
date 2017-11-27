@@ -1,0 +1,20 @@
+{
+  "environment": "development",
+  "location": "West Europe",
+  "cosmosdb_failover_location": "North Europe",
+  "azurerm_resource_group": "agid-rg-dev",
+  "azurerm_storage_account": "agidstoragedev",
+  "azurerm_storage_container": "agid-storage-dev",
+  "azurerm_storage_queue_emailnotifications": "emailnotifications",
+  "azurerm_storage_queue_createdmessages": "createdmessages",
+  "azurerm_cosmosdb": "agid-cosmosdb-dev",
+  "azurerm_cosmosdb_documentdb": "agid-documentdb-dev",
+  "azurerm_app_service_plan": "agid-app-dev",
+  "azurerm_functionapp": "agid-functions-dev",
+  "azurerm_functionapp_slot": "agid-functions-staging-dev",
+  "azurerm_functionapp_storage_account": "agidfuncstoragedev",
+  "azurerm_application_insights": "agid-appinsights-dev",
+  "azurerm_log_analytics": "agid-loganalytics-dev",
+  "azurerm_apim": "agid-apim-dev",
+  "apim_sku": "Standard"
+}

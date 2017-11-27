@@ -47,14 +47,23 @@ export ARM_CLIENT_SECRET=<service principal client secret (key)>
 export ARM_TENANT_ID=<Active Directory domain Id>
 ```
 
-- edit configuration file `infrastructure/tfvars.json`
+`ENVIRONMENT` value is taken from a environment variable; can be any between `production` or `development`
 
-- edit Terraform configuration file `infrastructure/azure.cf`
+- `set ENVIRONMENT=production`
+
+- edit configuration file for the choosen environment `infrastructure/$ENVIRONMENT/tfvars.json`
+
+- (optional) edit common settings `infrastructure/env/common/config.js`
+
+- (optional) edit Terraform configuration `infrastructure/azure.cf`
 
 - Run the following commands:
 
-`npm install`
-`npm run resources:deploy`
+```
+npm install -g yarn
+yarn install
+yarn resources:deploy
+```
 
 This task will deploy the following services to an Azure resource group:
 
