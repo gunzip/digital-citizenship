@@ -17,7 +17,7 @@
     "docs:deploy": "gh-pages -t -d site",
     "docs:publish": "npm-run-all docs:build docs:nojekyll docs:api docs:deploy",
     "resources:tf-init":
-      "cross-var terraform init -var-file=infrastructure/env/$ENVIRONMENT/tfvars.json -backend-config=infrastructure/env/$ENVIRONMENT/backend.tf infrastructure",
+      "cross-var terraform init -var-file=infrastructure/env/$ENVIRONMENT/tfvars.json -backend-config=\"infrastructure/env/$ENVIRONMENT/backend.tf\" infrastructure",
     "resources:tf-plan":
       "cross-var terraform plan -var-file=infrastructure/env/$ENVIRONMENT/tfvars.json infrastructure",
     "resources:tf-apply":

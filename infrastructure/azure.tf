@@ -4,11 +4,11 @@
 # Set up an Azure backend to store Terraform state.
 # You *must* create the storage account and the container before running this script
 terraform {
- backend "azurerm" {
-    resource_group_name  = "terraform-resource-group"
-    storage_account_name = "terraformstorageaccount"
-    container_name       = "terraform-storage-container"     
- }
+    backend "azurerm" {
+        resource_group_name  = "terraform-resource-group"
+        storage_account_name = "terraformstorageaccount"
+        container_name       = "terraform-storage-container"     
+    }
 }
 
 # Environment: production, developement or staging
@@ -77,6 +77,21 @@ variable "azurerm_app_service_portal" {
     type = "string"
 }
 
+# Name of the API management resource
+variable "azurerm_apim" {
+    type = "string"
+}
+
+# Name of the ADB2C tenant
+variable "azurerm_adb2c_tenant" {
+    type = "string"
+}
+
+# Name of the ADB2C policy
+variable "azurerm_adb2c_policy" {
+    type = "string"
+}
+
 # Name of Application Insights resource
 variable "azurerm_application_insights" {
     type = "string"
@@ -111,7 +126,8 @@ resource "azurerm_storage_account" "azurerm_storage_account" {
 
     # can be one between Premium_LRS, Standard_GRS, Standard_LRS, Standard_RAGRS, Standard_ZRS
     # see https://docs.microsoft.com/en-us/azure/storage/common/storage-redundancy
-    account_type = "Standard_GRS"
+    account_tier             = "Standard"
+    account_replication_type = "GRS"
 
     # see https://docs.microsoft.com/en-us/azure/storage/common/storage-service-encryption
     enable_blob_encryption = true
@@ -128,7 +144,8 @@ resource "azurerm_storage_account" "azurerm_functionapp_storage_account" {
 
     # can be one between Premium_LRS, Standard_GRS, Standard_LRS, Standard_RAGRS, Standard_ZRS
     # see https://docs.microsoft.com/en-us/azure/storage/common/storage-redundancy
-    account_type = "Standard_GRS"
+    account_tier             = "Standard"
+    account_replication_type = "GRS"
 
     # see https://docs.microsoft.com/en-us/azure/storage/common/storage-service-encryption
     enable_blob_encryption = true
@@ -267,11 +284,11 @@ resource "azurerm_app_service" "azurerm_app_service_portal" {
         ADMIN_API_KEY = ""
         CLIENT_ID = ""
         CLIENT_SECRET = ""
-        POLICY_NAME = "${var.azurerm_app_service_portal_policy}"
-        TENANT_ID = "${var.azurerm_app_service_portal_tenant}"
+        POLICY_NAME = "${var.azurerm_adb2c_policy}"
+        TENANT_ID = "${var.azurerm_adb2c_tenant}"
         WEBSITE_NODE_DEFAULT_VERSION = "6.5.0"
-        COOKIE_KEY = "${random_string.cookie_key}"
-        COOKIE_IV = "${random_string.cookie_iv}"
+        COOKIE_KEY = "${random_string.cookie_key.result}"
+        COOKIE_IV = "${random_string.cookie_iv.result}"
         LOG_LEVEL = "info"
         ARM_RESOURCE_GROUP = "${azurerm_resource_group.azurerm_resource_group.name}"
         ARM_APIM = "${var.azurerm_apim}"
