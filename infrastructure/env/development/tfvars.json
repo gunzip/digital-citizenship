@@ -20,5 +20,7 @@
   "azurerm_adb2c_tenant": "agidweb-dev.onmicrosoft.com",
   "azurerm_log_analytics": "agid-loganalytics-dev",
   "azurerm_apim": "agid-apim-dev",
-  "apim_sku": "Standard"
+  "apim_sku": "Standard",
+  "azurerm_eventhub_ns": "agid-eventhub-ns-dev",
+  "azurerm_apim_eventhub": "agid-apim-eventhub-dev"
 }

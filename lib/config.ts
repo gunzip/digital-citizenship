@@ -69,6 +69,8 @@ export interface IResourcesConfiguration {
   readonly apim_email: string;
   readonly apim_publisher: string;
   readonly apim_sku: string;
+  readonly azurerm_apim_eventhub: string;
+  readonly azurerm_eventhub_ns: string;
   readonly apim_scm_username: string;
   readonly apim_scm_cred_username: string;
   readonly apim_apis: ReadonlyArray<IApiDescription>;
@@ -151,6 +153,8 @@ export const readConfig = (
       apim_email: config.apim_email,
       apim_publisher: config.apim_publisher,
       apim_sku: config.apim_sku,
+      azurerm_eventhub_ns: config.azurerm_eventhub_ns,
+      azurerm_apim_eventhub: config.azurerm_apim_eventhub,
       apim_scm_username: config.apim_scm_username,
       apim_scm_cred_username: config.apim_scm_cred_username,
       message_blob_container: config.message_blob_container,

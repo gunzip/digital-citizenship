@@ -312,3 +312,24 @@ resource "azurerm_log_analytics_workspace" "azurerm_log_analytics" {
     sku                 = "Standard"
     retention_in_days   = 30
 }
+
+# Logging (EventHub)
+
+resource "azurerm_eventhub_namespace" "azurerm_eventhub_ns" {
+    name                = "${var.azurerm_eventhub_ns}"
+    location            = "${azurerm_resource_group.azurerm_resource_group.location}"
+    resource_group_name = "${azurerm_resource_group.azurerm_resource_group.name}"
+    sku                 = "Standard"
+    capacity            = 1
+    tags {
+        environment = "${var.environment}"
+    }
+}
+
+resource "azurerm_eventhub" "azurerm_apim_eventhub" {
+    name                = "${var.azurerm_apim_eventhub}"
+    namespace_name      = "${azurerm_eventhub_namespace.azurerm_eventhub_ns.name}"
+    resource_group_name = "${azurerm_resource_group.azurerm_resource_group.name}"
+    partition_count     = 1
+    message_retention   = 7
+}

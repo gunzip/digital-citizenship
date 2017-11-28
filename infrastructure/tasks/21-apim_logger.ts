@@ -29,10 +29,10 @@ export const run = async (config: IResourcesConfiguration) => {
     loginCreds.subscriptionId
   );
 
-  apiClient.logger.createOrUpdate(
+  await apiClient.logger.createOrUpdate(
     config.azurerm_resource_group,
     config.azurerm_apim,
-    eventHub.id,
+    config.,
     {
       credentials: {
         connectionString: "",

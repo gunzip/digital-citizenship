@@ -30,7 +30,7 @@
       "api": {
         "specsPath": "/specs/adm/swagger.json",
         "displayName": "Digital Citizenship Admin API",
-        "path": "/"
+        "path": "/adm"
       },
       "products": ["starter"],
       "policyFile": "admin.xml"

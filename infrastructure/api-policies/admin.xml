@@ -1,6 +1,6 @@
 <policies>
     <inbound>
-        <set-backend-service base-url="{{backendUrl}}" />
+        <set-backend-service base-url="{{backendUrl}}/adm" />
         <base />
         <set-header name="x-user-id" exists-action="override">
             <value>@(context.User.Id)</value>
