@@ -41,6 +41,10 @@ const addDays = (date: Date, days: number) => {
   return result;
 };
 
+/** 
+ * Set a named valued (property)
+ * see https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-properties
+ */
 const setApimProperties = async (
   apiClient: apiManagementClient,
   properties: {
@@ -66,7 +70,14 @@ const setApimProperties = async (
 };
 
 /**
- * Set up configuration, products, groups, policies, api, email templates, developer portal templates
+ * Set up API management
+ *  - Products
+ *  - Groups
+ *  - Policies
+ *  - API operations from Functions
+ *  - Email templates
+ *  - Developer portal templates
+ *  - Configuration settings (named values)
  */
 const setupConfigurationFromGit = async (
   apiClient: apiManagementClient,
@@ -74,9 +85,10 @@ const setupConfigurationFromGit = async (
   configurationDirectoryPath: string,
   config: IResourcesConfiguration
 ) => {
-  // TODO: Save old configuration to snapshot branch
+  // Maybe it's worth to save the old configuration to a snapshot branch (it takes about ten minutes)
+  // see https://docs.microsoft.com/en-us/rest/api/apimanagement/tenantconfiguration/save
 
-  // Get APi manager configuration repository (git) credentials
+  // Get API manager configuration repository (git) credentials
   const gitKey = await apiClient.user.getSharedAccessToken(
     config.azurerm_resource_group,
     config.azurerm_apim,
@@ -88,6 +100,7 @@ const setupConfigurationFromGit = async (
     }
   );
 
+  // Build Git URL with user and password
   const { hostname, protocol } = url.parse(scmUrl);
   const scmUrlWithCreds = url.format({
     ...{ hostname, protocol },
@@ -95,6 +108,8 @@ const setupConfigurationFromGit = async (
   });
 
   // Push master branch
+  // Actually, the only things we need to push are the developer portal templates
+  // as there is no API to edit them programmatically
   const tmpDir = tmp.dirSync();
   if (!tmpDir) {
     throw new Error("Cannot create temporary directory");
@@ -108,10 +123,10 @@ const setupConfigurationFromGit = async (
   shelljs.exec(`git push origin master --force`);
   shelljs.popd();
 
-  // TODO: validate configuration
-  // https://docs.microsoft.com/it-it/rest/api/apimanagement/tenantconfiguration/validate
+  // Maybe it's worth to validate the configuration (it's an asynchronous process)
+  // see https://docs.microsoft.com/it-it/rest/api/apimanagement/tenantconfiguration/validate
 
-  // Deploy configuration from master branch
+  // Deploy configuration from pushed master branch
   const deploy = await apiClient.tenantConfiguration.deploy(
     config.azurerm_resource_group,
     config.azurerm_apim,
@@ -137,7 +152,7 @@ export const run = async (config: IResourcesConfiguration) => {
     loginCreds.subscriptionId
   );
 
-  // Create API manager PaaS
+  // Create API management PaaS
   const apiManagementService = await apiClient.apiManagementService.createOrUpdate(
     config.azurerm_resource_group,
     config.azurerm_apim,
@@ -151,6 +166,7 @@ export const run = async (config: IResourcesConfiguration) => {
   );
 
   // Get Functions (backend) info
+  // We need these to setup API operations
   const webSiteClient = new webSiteManagementClient(
     loginCreds.creds as any,
     loginCreds.subscriptionId
@@ -160,7 +176,8 @@ export const run = async (config: IResourcesConfiguration) => {
     webSiteClient
   );
 
-  // Set up backend url and code (master key) to access Functions
+  // Set up backend url and code (master key) named values
+  // to access Functions endpoint in policies
   await setApimProperties(
     apiClient,
     {
@@ -174,21 +191,14 @@ export const run = async (config: IResourcesConfiguration) => {
     throw new Error("Cannot get apiManagementService.scmUrl");
   }
 
+  // Push configuration from local repository
   return setupConfigurationFromGit(
     apiClient,
     apiManagementService.scmUrl,
     CONFIGURATION_DIRECTORY_PATH,
     config
   );
-
-  // Configure ADB2C authentication
-  // apiClient.identityProvider.createOrUpdate()
 };
-
-// TODO: configure logger + event hub:
-//  https://docs.microsoft.com/it-it/azure/api-management/api-management-howto-log-event-hubs#create-an-api-management-logger
-//  https://docs.microsoft.com/it-it/rest/api/apimanagement/Logger/CreateOrUpdate
-//  or log analytics (or storage)
 
 readConfig(process.env.ENVIRONMENT)
   .then(run)

@@ -162,6 +162,7 @@ export const readConfig = (
     );
 
     if (
+      !process.env.NPMDEPLOY &&
       !readlineSync.keyInYNStrict(
         `Do you want to proceed with this configuration (${environment}) ?`
       )

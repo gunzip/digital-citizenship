@@ -59,6 +59,7 @@ export ARM_TENANT_ID=<Active Directory domain Id>
 
 - Run the following commands:
 
+```
 npm install -g yarn
 yarn install
 yarn resources:deploy

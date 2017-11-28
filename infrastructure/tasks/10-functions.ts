@@ -115,7 +115,7 @@ export const run = async (config: IResourcesConfiguration) => {
         { name: "FUNCTIONS_EXTENSION_VERSION", value: "~1" },
         // optional parameters
         {
-          name: "COSMODB_NAME",
+          name: "COSMOSDB_NAME",
           value: config.azurerm_cosmosdb_documentdb
         },
         { name: "QueueStorageConnection", value: storageConnectionString },
@@ -127,12 +127,18 @@ export const run = async (config: IResourcesConfiguration) => {
         // to retrieve the master key
         { name: "AzureWebJobsSecretStorageType", value: "disabled" },
         { name: "WEBSITE_HTTPLOGGING_RETENTION_DAYS", value: "3" },
+        { name: "SCM_USE_FUNCPACK_BUILD", value: "1" },
         {
           name: "MESSAGE_CONTAINER_NAME",
           value: config.message_blob_container
         }
       ],
       connectionStrings: [
+        {
+          connectionString: process.env.SENDGRID_KEY,
+          name: "SENDGRID_KEY",
+          type: "Custom"
+        },
         {
           connectionString: cosmosdbLink,
           name: "COSMOSDB_URI",
@@ -147,39 +153,51 @@ export const run = async (config: IResourcesConfiguration) => {
     }
   };
 
+  // Create production slot
   const createdFunction = await webSiteClient.webApps.createOrUpdate(
     config.azurerm_resource_group,
     config.azurerm_functionapp,
     appConfig
   );
 
+  // Create staging slot
   if (config.azurerm_functionapp_slot && createdFunction.id) {
-    // Create slot for staging
     await webSiteClient.webApps.createOrUpdateSlot(
       config.azurerm_resource_group,
       config.azurerm_functionapp,
       appConfig,
       config.azurerm_functionapp_slot
     );
+  }
 
-    // Create git integration for the staging slot
-    if (config.functionapp_git_repo) {
-      await webSiteClient.webApps.createOrUpdateSourceControlSlot(
-        config.azurerm_resource_group,
-        config.azurerm_functionapp,
-        {
-          branch: config.functionapp_git_branch,
-          deploymentRollbackEnabled: true,
-          // FIXME: setting `isManualIntegration: false` will fail trying to send an email
-          // to the service principal user. I guess this is a bug in the Azure APIs
-          isManualIntegration: true,
-          isMercurial: false,
-          repoUrl: config.functionapp_git_repo,
-          type: config.functionapp_scm_type
-        },
-        config.azurerm_functionapp_slot
-      );
-    }
+  const siteSourceControl = {
+    branch: config.functionapp_git_branch,
+    deploymentRollbackEnabled: true,
+    // FIXME: setting `isManualIntegration: false` will fail trying to send an email
+    // to the service principal user. I guess this is a bug in the Azure APIs
+    isManualIntegration: true,
+    isMercurial: false,
+    repoUrl: config.functionapp_git_repo,
+    type: config.functionapp_scm_type
+  };
+
+  // Create git integration for the staging slot
+  if (config.azurerm_functionapp_slot && config.functionapp_git_repo) {
+    await webSiteClient.webApps.createOrUpdateSourceControlSlot(
+      config.azurerm_resource_group,
+      config.azurerm_functionapp,
+      siteSourceControl,
+      config.azurerm_functionapp_slot
+    );
+  }
+
+  // Create git integration for the production slot
+  if (createdFunction.id && config.functionapp_git_repo) {
+    await webSiteClient.webApps.createOrUpdateSourceControl(
+      config.azurerm_resource_group,
+      config.azurerm_functionapp,
+      siteSourceControl
+    );
   }
 };
 

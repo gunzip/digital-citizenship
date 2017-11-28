@@ -6,6 +6,8 @@
  * This is equivalent to push the "Sync" button in the
  * Azure portal -> Functions -> Deployments blade.
  * 
+ * WARNING: this task does not sync the production slot.
+ * 
  * This task assumes that the following resources are already created:
  *  - Resource group
  *  - Functions (app service)

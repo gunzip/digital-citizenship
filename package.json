@@ -29,7 +29,7 @@
       "ts-node infrastructure/tasks/15-functions_sync.ts",
     "resources:cosmosdb": "ts-node infrastructure/tasks/00-cosmosdb.ts",
     "resources:deploy":
-      "npm-run-all resources:tf-init resources:tf-apply resources:cosmosdb resources:functions resources:functions:sync resources:apim resources:apim:api"
+      "cross-env NPMDEPLOY=1 npm-run-all resources:tf-init resources:tf-apply resources:cosmosdb resources:functions resources:apim resources:apim:api"
   },
   "devDependencies": {
     "@types/documentdb": "^1.10.2",
