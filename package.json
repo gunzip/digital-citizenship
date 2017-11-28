@@ -23,6 +23,7 @@
     "resources:tf-apply":
       "cross-var terraform apply -var-file=infrastructure/env/$ENVIRONMENT/tfvars.json infrastructure",
     "resources:apim": "ts-node infrastructure/tasks/20-apim.ts",
+    "resources:apim:logger": "ts-node infrastructure/tasks/21-apim_logger.ts",
     "resources:apim:api": "ts-node infrastructure/tasks/25-apim_api.ts",
     "resources:functions": "ts-node infrastructure/tasks/10-functions.ts",
     "resources:functions:sync":
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@types/documentdb": "^1.10.2",
     "@types/node": "^6.0.0",
+    "@types/readline-sync": "^1.4.2",
     "@types/request": "^2.0.3",
     "@types/shelljs": "^0.7.4",
     "@types/tmp": "^0.0.33",
@@ -44,11 +46,13 @@
     "azure-arm-website": "^2.0.0-preview",
     "azure-cli": "^0.10.16",
     "azure-storage": "^2.5.0",
+    "cross-var": "^1.1.0",
     "documentdb": "^1.12.2",
     "dotenv": "^4.0.0",
     "gh-pages": "^1.0.0",
     "npm-run-all": "^4.1.1",
     "prettier": "^1.7.0",
+    "readline-sync": "^1.4.7",
     "request": "^2.83.0",
     "shelljs": "^0.7.8",
     "tmp": "^0.0.33",
@@ -57,9 +61,9 @@
     "tslint-config-prettier": "^1.5.0",
     "tslint-immutable": "^4.1.0",
     "tslint-plugin-prettier": "^1.2.0",
-    "typescript": "^2.5.2",
-    "@types/readline-sync": "^1.4.2",
-    "cross-var": "^1.1.0",
-    "readline-sync": "^1.4.7"
+    "typescript": "^2.5.2"
+  },
+  "dependencies": {
+    "azure-arm-eventhub": "^1.1.0-preview"
   }
 }

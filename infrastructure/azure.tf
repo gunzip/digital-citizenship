@@ -102,6 +102,21 @@ variable "azurerm_log_analytics" {
     type = "string"    
 }
 
+# EventHub namespace
+variable "azurerm_eventhub_ns" {
+    type = "string"    
+}
+
+# EventHub logger for API management
+variable "azurerm_apim_eventhub" {
+    type = "string"    
+}
+
+# EventHub rule for API management
+variable "azurerm_apim_eventhub_rule" {
+    type = "string"    
+}
+
 # module "variables" {
 #     source = "./modules/variables"
 # }
@@ -330,6 +345,17 @@ resource "azurerm_eventhub" "azurerm_apim_eventhub" {
     name                = "${var.azurerm_apim_eventhub}"
     namespace_name      = "${azurerm_eventhub_namespace.azurerm_eventhub_ns.name}"
     resource_group_name = "${azurerm_resource_group.azurerm_resource_group.name}"
-    partition_count     = 1
+    # EventHub Partition Count has to be between 2 and 32
+    partition_count     = 2
     message_retention   = 7
+}
+
+resource "azurerm_eventhub_authorization_rule" "azurerm_apim_eventhub_rule" {
+    name                = "${var.azurerm_apim_eventhub_rule}"
+    namespace_name      = "${azurerm_eventhub_namespace.azurerm_eventhub_ns.name}"
+    resource_group_name = "${azurerm_resource_group.azurerm_resource_group.name}"
+    eventhub_name       = "${azurerm_eventhub.azurerm_apim_eventhub.name}"
+    listen              = true
+    send                = true
+    manage              = false
 }

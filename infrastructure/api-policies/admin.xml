@@ -17,6 +17,9 @@
         <set-header name="x-functions-key" exists-action="override">
             <value>{{code}}</value>
         </set-header>
+        <log-to-eventhub logger-id="apim-logger">
+            @( string.Join(",", DateTime.UtcNow, context.Deployment.ServiceName, context.RequestId, context.Request.IpAddress, context.Operation.Name))
+        </log-to-eventhub>
     </inbound>
     <outbound>
         <base />

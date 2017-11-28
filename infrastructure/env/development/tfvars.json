@@ -22,5 +22,6 @@
   "azurerm_apim": "agid-apim-dev",
   "apim_sku": "Standard",
   "azurerm_eventhub_ns": "agid-eventhub-ns-dev",
-  "azurerm_apim_eventhub": "agid-apim-eventhub-dev"
+  "azurerm_apim_eventhub": "agid-apim-eventhub-dev",
+  "azurerm_apim_eventhub_rule": "apim-eventhub-rule"
 }

@@ -12,6 +12,7 @@
   "functionapp_nodejs_version": "6.11.2",
   "apim_email": "apim@agid.gov.it",
   "apim_publisher": "Digital Citizenship",
+  "apim_logger_id": "apim-logger",
   "apim_scm_username": "apim",
   "apim_scm_cred_username": "git",
   "apim_apis": [

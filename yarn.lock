@@ -303,6 +303,13 @@ azure-arm-dns@0.11.1:
     ms-rest "^1.14.0"
     ms-rest-azure "^1.14.0"
 
+azure-arm-eventhub@^1.1.0-preview:
+  version "1.1.0-preview"
+  resolved "https://registry.yarnpkg.com/azure-arm-eventhub/-/azure-arm-eventhub-1.1.0-preview.tgz#908b08a7d84bc3baea65891c8c3b46144beef17c"
+  dependencies:
+    ms-rest "^2.2.2"
+    ms-rest-azure "^2.3.3"
+
 azure-arm-hdinsight-jobs@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/azure-arm-hdinsight-jobs/-/azure-arm-hdinsight-jobs-0.1.0.tgz#252938f18d4341adf9942261656e791490c3c220"
