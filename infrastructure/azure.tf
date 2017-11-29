@@ -316,6 +316,27 @@ resource "azurerm_app_service" "azurerm_app_service_portal" {
     }
 }
 
+# TODO: assign role to the MSI to let the App Service access API Management users
+# resource "azurerm_virtual_machine_extension" "app_service_portal_msi" {
+#     name                 = "app_service_portal_msi"
+#     location            = "${azurerm_resource_group.azurerm_resource_group.location}"
+#     resource_group_name = "${azurerm_resource_group.azurerm_resource_group.name}"
+#     app_service_plan_id = "${azurerm_app_service_plan.azurerm_app_service_plan_portal.id}"
+#
+#     # virtual_machine_name = "${azurerm_virtual_machine.test.name}"
+#
+#     publisher            = "Microsoft.ManagedIdentity"
+#     type                 = "ManagedIdentityExtensionForWindows"
+#     type_handler_version = "1.0"
+#     settings             = ""
+# }
+# resource "azurerm_role_assignment" "app_service_portal_role" {
+#   name               = "app_service_portal_role"
+#   scope              = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.azurerm_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.azurerm_apim}"
+#   role_definition_id = ""
+#   principal_id       = ""
+# }
+
 ## !!! API MANAGER NOT SUPPORTED
 
 # Logging (OSM)

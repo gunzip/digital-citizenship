@@ -78,6 +78,8 @@ export interface IResourcesConfiguration {
   readonly apim_apis: ReadonlyArray<IApiDescription>;
   readonly message_blob_container: string;
   readonly azure_portal_ips: ReadonlyArray<string>;
+  readonly azurerm_adb2c_tenant: string;
+  readonly azurerm_adb2c_policy: string;
 }
 
 /**
@@ -162,7 +164,9 @@ export const readConfig = (
       apim_scm_username: config.apim_scm_username,
       apim_scm_cred_username: config.apim_scm_cred_username,
       message_blob_container: config.message_blob_container,
-      azure_portal_ips: config.azure_portal_ips
+      azure_portal_ips: config.azure_portal_ips,
+      azurerm_adb2c_tenant: config.azurerm_adb2c_tenant,
+      azurerm_adb2c_policy: config.azurerm_adb2c_policy
     };
 
     Object.keys(checkConfig).forEach(k =>
