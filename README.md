@@ -42,7 +42,7 @@ All binaries must be in the system path.
 To authenticate Digital Citizenship API users (through the developer portal) we use an [Active Directory B2C](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-overview) (ADB2C) tenant.
 
 The ADB2C tenant *must* exists *before* running any of the task illustrated below.
-Alas, it's actually not possible to create it programmatically:
+Alas, it's actually not possible to create (and manage) it programmatically:
 
 https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-get-started
 
@@ -51,45 +51,61 @@ in the `tfvars.json` file relative to the target deploy environment
 (ie. [production](./infrastructure/env/production/tfvars.json) or 
 [development](./infrastructure/env/development/tfvars.json)).
 
-#### Step 2 - Add sign and encyption key for policies 
+#### Step 2 - Add users attributes in ADB2C
 
-Add signing and encryption keys to your B2C tenant for use by custom policies.
+During the sign-in we collect some custom attributes relative to the user account.
 
-- Open the "Identity Experience Framework" blade in your Azure AD B2C tenant settings
-- Select "Policy Keys" to view the keys available in your tenant
-- Create `B2C_1A_TokenSigningKeyContainer`:
-  - Select "Add"
-    - Select "Generate"
-    - For Name, use "TokenSigningKeyContainer" 
-    - For Key type, use "RSA"
-    - For Dates, use the defaults
-    - For Key usage, use "Signature"
-    - Select Create
-- Create `B2C_1A_TokenEncryptionKeyContainer`:
-  - Select "Add"
-    - Select "Generate"
-    - For Name, use "TokenEncryptionKeyContainer" 
-    - For Key type, use "RSA"
-    - For Dates, use the defaults
-    - For Key usage, use "Encryption"
-    - Select Create
+Go to the ADB2C blade in the Azure portal -> "User attributes"
+and add the following custom attributes (type is always "String"):
 
-#### Step 2 - Add an ADB2C Sign-in / Sing-up policy
+1. Organization
+1. Department
+1. Service
+
+#### Step 3 - Add and configure an ADB2C Sign-in / Sing-up policy
 
 To be able to sign-in and sign-up users through ADB2C you need
 to create a *Sign-in / Sign-up Policy*.
 
-Go the Azure ADB2C blade in the Azure portal -> "Identity experience framework" -> "Upload policy".
+Go the Azure ADB2C blade in the Azure portal 
+-> "Sign-up or Sign-in policies" -> "Add".
 
-Upload the policy files in the following order:
-
-1. [`infrastructure/adb2c/TrustFrameworkBase.xml`](./infrastructure/adb2c/TrustFrameworkBase.xml)
-1. [`infrastructure/adb2c/TrustFrameworkExtensions.xml`](./infrastructure/adb2c/TrustFrameworkExtensions.xml)
-1. [`infrastructure/adb2c/SignUpOrSignIn.xml`](./infrastructure/adb2c/SignUpOrSignIn.xml)
+Name:
+  - SignUpIn
+Identity Providers:
+  - Email signup
+Sign-up attributes:
+  - Department
+  - Display Name
+  - Given Name
+  - Organization
+  - Service
+  - Surname
+Application claims: 
+  - Department
+  - Display Name
+  - Given Name
+  - Organization
+  - Service
+  - Surname
+  - Email Addresses
+  - Identity Provider
+  - User is new
+  - User's Object ID
+Multifactor authentication
+- On
+Page UI customization
+- Set up for every page the following custom page URI:
+  https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html
+  - Save the policy
+  - Customize the "Multifactor authentication page"
+  - Open "Local account sign-up page"
+    - Mark all fields as required (optional = no)
+    - Reorder fields and rename labels at wish
 
 ref: https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-reference-policies
 
-#### Step 3 - Add 2 Applications in the Azure ADB2C tenant
+#### Step 4 - Add 2 Applications in the Azure ADB2C tenant
 
 Finally, you need to register (create) two ADB2C Applications:
 https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-app-registration
@@ -174,8 +190,8 @@ these ones are created by NodeJS scripts (`infrastructure/tasks`) that provision
 
 ### Finishing the installation
 
-Some tasks needed to provision resources cannot be carried out programmatically
-and must be taken manually using the Azure portal interface.
+Some tasks cannot be carried out programmatically and require a manual intervent 
+by the Azure subscription administrator through the Azure portal interface.
 
 #### Activate "Managed Service Identity" for the onboarding Web App Service
 
@@ -215,7 +231,7 @@ for testing purposes when deploying to a staging resource group).
 ## Example output
 
 ```
-$ npm run resources:deploy
+$ yarn resources:deploy
 
 > digital-citizenship@0.1.0 resources:deploy ...digital-citizenship
 > npm-run-all resources:tf-init resources:tf-apply resources:cosmosdb resources:functions resources:api
@@ -275,4 +291,30 @@ export DEV_PORTAL_EXT_CLIENT_SECRET="XXXXXXXXXXXXXXXXXXXXXXXX"
 
 # Mail service API key
 export SENDGRID_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+```
+
+## Deploy
+
+When you are ready to deploy a new release, you need to synch 
+the source code in the Git repository to the App Service (or Functions) one.
+
+You may opt to configure continuos deployment from a Git branch,
+automatically triggering a new deploy through a webhook when the changes are pushed.
+To do that you must give your Azure subscription access to the
+Git account in order to set up the webhook:
+
+(https://docs.microsoft.com/en-us/azure/azure-functions/functions-continuous-deployment
+
+We chose to not setup this kind of continous deployment, but
+to provide scripts that, when launched, will synch the code from the
+Git repository to Azure services.
+
+To deploy the developer portal web application run:
+```
+yarn devapp:sync
+```
+
+To deploy code to Azure Functions run:
+```
+yarn functions:sync
 ```

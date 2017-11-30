@@ -25,12 +25,13 @@
     "resources:apim": "ts-node infrastructure/tasks/20-apim.ts",
     "resources:apim:logger": "ts-node infrastructure/tasks/21-apim_logger.ts",
     "resources:apim:api": "ts-node infrastructure/tasks/25-apim_api.ts",
+    "resources:apim:adb2c": "ts-node infrastructure/tasks/22-apim_adb2c.ts",
     "resources:functions": "ts-node infrastructure/tasks/10-functions.ts",
     "resources:functions:sync":
       "ts-node infrastructure/tasks/15-functions_sync.ts",
     "resources:cosmosdb": "ts-node infrastructure/tasks/00-cosmosdb.ts",
     "resources:deploy":
-      "cross-env NPMDEPLOY=1 npm-run-all resources:tf-init resources:tf-apply resources:cosmosdb resources:functions resources:apim resources:apim:api"
+      "cross-env NPMDEPLOY=1 npm-run-all resources:tf-init resources:tf-apply resources:cosmosdb resources:functions resources:apim resources:apim:api resources:apim:adb2c"
   },
   "devDependencies": {
     "@types/documentdb": "^1.10.2",
