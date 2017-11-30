@@ -53,7 +53,8 @@ in the `tfvars.json` file relative to the target deploy environment
 
 #### Step 2 - Add users attributes in ADB2C
 
-During the sign-in we collect some custom attributes relative to the user account.
+During user sign-in to the Digital Citizenship API
+we collect some custom attributes relative to the user account.
 
 Go to the ADB2C blade in the Azure portal -> "User attributes"
 and add the following custom attributes (type is always "String"):
@@ -70,10 +71,12 @@ to create a *Sign-in / Sign-up Policy*.
 Go the Azure ADB2C blade in the Azure portal 
 -> "Sign-up or Sign-in policies" -> "Add".
 
-Name:
+Policy Name:
   - SignUpIn
+
 Identity Providers:
   - Email signup
+
 Sign-up attributes:
   - Department
   - Display Name
@@ -81,6 +84,7 @@ Sign-up attributes:
   - Organization
   - Service
   - Surname
+
 Application claims: 
   - Department
   - Display Name
@@ -92,8 +96,10 @@ Application claims:
   - Identity Provider
   - User is new
   - User's Object ID
+
 Multifactor authentication
 - On
+
 Page UI customization
 - Set up for every page the following custom page URI:
   https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html
