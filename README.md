@@ -66,7 +66,7 @@ and add the following custom attributes (type is always "String"):
 #### Step 3 - Add and configure an ADB2C Sign-in / Sing-up policy
 
 To be able to sign-in and sign-up users through ADB2C you need
-to create a *Sign-in / Sign-up Policy*.
+to [create a Sign-in / Sign-up Policy](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-reference-policies).
 
 Go the Azure ADB2C blade in the Azure portal 
 -> "Sign-up or Sign-in policies" -> "Add".
@@ -110,8 +110,6 @@ Page UI customization
   - Mark all fields as required (optional = no)
   - Reorder fields and rename labels at wish
 
-ref: https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-reference-policies
-
 #### Step 4 - Add 2 Applications in the Azure ADB2C tenant
 
 Finally, you need to register (create) two ADB2C Applications:
@@ -120,7 +118,9 @@ https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c
 1. Register an ADB2C Application `dev-portal-app`
 
 Set the return URL of this application to:
-https://${config.azurerm\_apim}.portal.azure-api.net/signin-aad
+https://`${config.azurerm\_apim}`.portal.azure-api.net/signin-aad
+
+(replace `${config.azurerm\_apim}` with the actual value in your tfvars.json file)
 
 Generate a key, then set the two environment variables:
 
@@ -132,7 +132,9 @@ export DEV_PORTAL_CLIENT_SECRET=<Application Key>
 1. Register an ADB2C Application `dev-portal-ext`
 
 Set the return URL of this application to:
-https://${config.azurerm\_app\_service\_portal}.azurewebsites.net/auth/openid/return
+https://`${config.azurerm\_app\_service\_portal}`.azurewebsites.net/auth/openid/return
+
+(replace `${config.azurerm\_app\_service\_portal}` with the actual value in your tfvars.json file)
 
 Generate a key, then set the two environment variables:
 
