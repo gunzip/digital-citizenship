@@ -29,19 +29,19 @@ export const run = async (config: IResourcesConfiguration) => {
     loginCreds.subscriptionId
   );
 
-  const conf = await webSiteClient.webApps.listApplicationSettings(
+  const appSettings = await webSiteClient.webApps.listApplicationSettings(
     config.azurerm_resource_group,
     config.azurerm_app_service_portal
   );
 
   // Set up environment variables in application settings
-  if (conf.properties) {
+  if (appSettings.properties) {
     return webSiteClient.webApps.updateApplicationSettings(
       config.azurerm_resource_group,
       config.azurerm_app_service_portal,
       {
         properties: {
-          ...conf.properties,
+          ...appSettings.properties,
           ARM_SUBSCRIPTION_ID,
           CLIENT_ID,
           CLIENT_SECRET

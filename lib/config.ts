@@ -9,6 +9,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as readlineSync from "readline-sync";
 
+import * as dotenv from "dotenv";
+dotenv.config();
+
 // configuration file to feed terraform settings
 const TF_VARS_FILE_NAME = "tfvars.json";
 
@@ -41,50 +44,52 @@ interface IApiDescription {
 }
 
 export interface IResourcesConfiguration {
-  readonly environment: string;
-  readonly location: string;
-  readonly cosmosdb_failover_location: string;
-  readonly azurerm_resource_group: string;
-  readonly azurerm_storage_account: string;
-  readonly azurerm_storage_container: string;
-  readonly azurerm_storage_queue_emailnotifications: string;
-  readonly azurerm_storage_queue_createdmessages: string;
+  readonly apim_admin_email: string;
+  readonly apim_admin_product: string;
+  readonly apim_apis: ReadonlyArray<IApiDescription>;
+  readonly apim_email: string;
+  readonly apim_logger_id: string;
+  readonly apim_publisher: string;
+  readonly apim_scm_cred_username: string;
+  readonly apim_scm_username: string;
+  readonly apim_sku: string;
+  readonly app_service_portal_git_branch: string;
+  readonly app_service_portal_git_repo: string;
+  readonly app_service_portal_scm_type: string;
+  readonly azure_portal_ips: ReadonlyArray<string>;
+  readonly azurerm_adb2c_policy: string;
+  readonly azurerm_adb2c_tenant: string;
+  readonly azurerm_apim: string;
+  readonly azurerm_apim_eventhub: string;
+  readonly azurerm_apim_eventhub_rule: string;
+  readonly azurerm_app_service_plan: string;
+  readonly azurerm_app_service_plan_portal: string;
+  readonly azurerm_app_service_portal: string;
+  readonly azurerm_application_insights: string;
   readonly azurerm_cosmosdb: string;
-  readonly azurerm_cosmosdb_documentdb: string;
   readonly azurerm_cosmosdb_collections: ReadonlyArray<{
     readonly name: string;
     readonly partitionKey: string;
   }>;
-  readonly azurerm_app_service_plan: string;
+  readonly azurerm_cosmosdb_documentdb: string;
+  readonly azurerm_eventhub_ns: string;
   readonly azurerm_functionapp: string;
   readonly azurerm_functionapp_slot: string;
-  readonly functionapp_git_repo: string;
-  readonly functionapp_git_branch: string;
-  readonly functionapp_scm_type: string;
-  readonly functionapp_nodejs_version: string;
-  readonly azurerm_app_service_plan_portal: string;
-  readonly azurerm_app_service_portal: string;
-  readonly app_service_portal_git_repo: string;
-  readonly app_service_portal_git_branch: string;
-  readonly app_service_portal_scm_type: string;
   readonly azurerm_functionapp_storage_account: string;
-  readonly azurerm_application_insights: string;
   readonly azurerm_log_analytics: string;
-  readonly azurerm_apim: string;
-  readonly apim_email: string;
-  readonly apim_publisher: string;
-  readonly apim_sku: string;
-  readonly azurerm_eventhub_ns: string;
-  readonly azurerm_apim_eventhub: string;
-  readonly azurerm_apim_eventhub_rule: string;
-  readonly apim_logger_id: string;
-  readonly apim_scm_username: string;
-  readonly apim_scm_cred_username: string;
-  readonly apim_apis: ReadonlyArray<IApiDescription>;
+  readonly azurerm_resource_group: string;
+  readonly azurerm_storage_account: string;
+  readonly azurerm_storage_container: string;
+  readonly azurerm_storage_queue_createdmessages: string;
+  readonly azurerm_storage_queue_emailnotifications: string;
+  readonly cosmosdb_failover_location: string;
+  readonly environment: string;
+  readonly functionapp_git_branch: string;
+  readonly functionapp_git_repo: string;
+  readonly functionapp_nodejs_version: string;
+  readonly functionapp_scm_type: string;
+  readonly location: string;
   readonly message_blob_container: string;
-  readonly azure_portal_ips: ReadonlyArray<string>;
-  readonly azurerm_adb2c_tenant: string;
-  readonly azurerm_adb2c_policy: string;
 }
 
 /**
@@ -136,44 +141,46 @@ export const readConfig = (
     console.log(config);
 
     const checkConfig: Partial<IResourcesConfiguration> = {
-      environment: config.environment,
-      location: config.location,
-      cosmosdb_failover_location: config.cosmosdb_failover_location,
-      azurerm_resource_group: config.azurerm_resource_group,
-      azurerm_storage_account: config.azurerm_storage_account,
-      azurerm_storage_container: config.azurerm_storage_container,
-      azurerm_storage_queue_emailnotifications:
-        config.azurerm_storage_queue_emailnotifications,
-      azurerm_storage_queue_createdmessages:
-        config.azurerm_storage_queue_createdmessages,
-      azurerm_cosmosdb: config.azurerm_cosmosdb,
-      azurerm_cosmosdb_documentdb: config.azurerm_cosmosdb_documentdb,
-      azurerm_cosmosdb_collections: config.azurerm_cosmosdb_collections,
+      apim_admin_email: config.apim_admin_email,
+      apim_admin_product: config.apim_admin_product,
+      apim_apis: config.apim_apis,
+      apim_email: config.apim_email,
+      apim_logger_id: config.apim_logger_id,
+      apim_publisher: config.apim_publisher,
+      apim_scm_cred_username: config.apim_scm_cred_username,
+      apim_scm_username: config.apim_scm_username,
+      apim_sku: config.apim_sku,
+      azure_portal_ips: config.azure_portal_ips,
+      azurerm_adb2c_policy: config.azurerm_adb2c_policy,
+      azurerm_adb2c_tenant: config.azurerm_adb2c_tenant,
+      azurerm_apim: config.azurerm_apim,
+      azurerm_apim_eventhub: config.azurerm_apim_eventhub,
+      azurerm_apim_eventhub_rule: config.azurerm_apim_eventhub_rule,
       azurerm_app_service_plan: config.azurerm_app_service_plan,
-      azurerm_functionapp: config.azurerm_functionapp,
-      azurerm_functionapp_slot: config.azurerm_functionapp_slot,
-      functionapp_nodejs_version: config.functionapp_nodejs_version,
-      azurerm_functionapp_storage_account:
-        config.azurerm_functionapp_storage_account,
       azurerm_app_service_plan_portal: config.azurerm_app_service_plan_portal,
       azurerm_app_service_portal: config.azurerm_app_service_portal,
       azurerm_application_insights: config.azurerm_application_insights,
-      azurerm_log_analytics: config.azurerm_log_analytics,
-      azurerm_apim: config.azurerm_apim,
-      apim_apis: config.apim_apis,
-      apim_email: config.apim_email,
-      apim_publisher: config.apim_publisher,
-      apim_sku: config.apim_sku,
+      azurerm_cosmosdb: config.azurerm_cosmosdb,
+      azurerm_cosmosdb_collections: config.azurerm_cosmosdb_collections,
+      azurerm_cosmosdb_documentdb: config.azurerm_cosmosdb_documentdb,
       azurerm_eventhub_ns: config.azurerm_eventhub_ns,
-      azurerm_apim_eventhub: config.azurerm_apim_eventhub,
-      azurerm_apim_eventhub_rule: config.azurerm_apim_eventhub_rule,
-      apim_logger_id: config.apim_logger_id,
-      apim_scm_username: config.apim_scm_username,
-      apim_scm_cred_username: config.apim_scm_cred_username,
-      message_blob_container: config.message_blob_container,
-      azure_portal_ips: config.azure_portal_ips,
-      azurerm_adb2c_tenant: config.azurerm_adb2c_tenant,
-      azurerm_adb2c_policy: config.azurerm_adb2c_policy
+      azurerm_functionapp: config.azurerm_functionapp,
+      azurerm_functionapp_slot: config.azurerm_functionapp_slot,
+      azurerm_functionapp_storage_account:
+        config.azurerm_functionapp_storage_account,
+      azurerm_log_analytics: config.azurerm_log_analytics,
+      azurerm_resource_group: config.azurerm_resource_group,
+      azurerm_storage_account: config.azurerm_storage_account,
+      azurerm_storage_container: config.azurerm_storage_container,
+      azurerm_storage_queue_createdmessages:
+        config.azurerm_storage_queue_createdmessages,
+      azurerm_storage_queue_emailnotifications:
+        config.azurerm_storage_queue_emailnotifications,
+      cosmosdb_failover_location: config.cosmosdb_failover_location,
+      environment: config.environment,
+      functionapp_nodejs_version: config.functionapp_nodejs_version,
+      location: config.location,
+      message_blob_container: config.message_blob_container
     };
 
     Object.keys(checkConfig).forEach(k =>
