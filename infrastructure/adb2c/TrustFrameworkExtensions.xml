@@ -2,17 +2,11 @@
 <TrustFrameworkPolicy 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
-  PolicySchemaVersion="0.3.0.0" 
-  TenantId="yourtenant.onmicrosoft.com" 
-  PolicyId="B2C_1A_TrustFrameworkExtensions" 
-  PublicPolicyUri="http://yourtenant.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
-  
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="agiddev.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://agiddev.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
   <BasePolicy>
-    <TenantId>yourtenant.onmicrosoft.com</TenantId>
+    <TenantId>agiddev.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
   </BasePolicy>
-
   <BuildingBlocks>
     <ClaimsSchema>
       <ClaimType Id="displayName">
@@ -35,31 +29,94 @@
         <DataType>string</DataType>
         <Restriction MergeBehavior="Append" />
       </ClaimType>
+      <ClaimType Id="extension_Organization">
+        <DisplayName>Organization Name</DisplayName>
+        <DataType>string</DataType>
+        <Restriction MergeBehavior="Append" />
+      </ClaimType>
+      <ClaimType Id="extension_Department">
+        <DisplayName>Department Name</DisplayName>
+        <DataType>string</DataType>
+        <Restriction MergeBehavior="Append" />
+      </ClaimType>
     </ClaimsSchema>
     <ContentDefinitions>
+      <!-- This content definition is to render an error page that displays unhandled errors. -->
       <ContentDefinition Id="api.error">
         <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:globalexception:1.1.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Error page</Item>
+        </Metadata>
       </ContentDefinition>
-      <ContentDefinition Id="api.phonefactor1.1">
+      <ContentDefinition Id="api.idpselections">
         <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:idpselection:1.0.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Idp selection page</Item>
+          <Item Key="language.intro">Sign in</Item>
+        </Metadata>
       </ContentDefinition>
-      <ContentDefinition Id="api.signinandsignupwithpassword">
+      <ContentDefinition Id="api.idpselections.signup">
         <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:idpselection:1.0.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Idp selection page</Item>
+          <Item Key="language.intro">Sign up</Item>
+        </Metadata>
       </ContentDefinition>
-      <ContentDefinition Id="api.localaccountsignup1.1">
+      <ContentDefinition Id="api.signuporsignin">
         <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:unifiedssp:1.0.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Signin and Signup</Item>
+        </Metadata>
       </ContentDefinition>
-      <ContentDefinition Id="api.selfasserted1.1">
+      <ContentDefinition Id="api.selfasserted">
         <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:selfasserted:1.1.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Collect information from user page</Item>
+        </Metadata>
+      </ContentDefinition>
+      <ContentDefinition Id="api.selfasserted.profileupdate">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:selfasserted:1.1.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Collect information from user page</Item>
+        </Metadata>
+      </ContentDefinition>
+      <ContentDefinition Id="api.localaccountsignup">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:selfasserted:1.1.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Local account sign up page</Item>
+        </Metadata>
+      </ContentDefinition>
+      <ContentDefinition Id="api.localaccountpasswordreset">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:selfasserted:1.1.0</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Local account change password page</Item>
+        </Metadata>
       </ContentDefinition>
     </ContentDefinitions>
   </BuildingBlocks>
-
   <ClaimsProviders>
     <ClaimsProvider>
       <DisplayName>PhoneFactor</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="PhoneFactor-Common">
+          <DisplayName>PhoneFactor</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.PhoneFactorProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <EnabledForUserJourneys>Always</EnabledForUserJourneys>
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -83,6 +140,8 @@
       <DisplayName>Self Asserted</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="SelfAsserted-Input">
+          <DisplayName>Self Asserted</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="displayName" />
             <InputClaim ClaimTypeReferenceId="givenName" />
@@ -106,6 +165,8 @@
       <DisplayName>Azure Active Directory</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="AAD-ReadCommon">
+          <DisplayName>Azure Active Directory</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" />
@@ -115,6 +176,8 @@
           </OutputClaims>
         </TechnicalProfile>
         <TechnicalProfile Id="AAD-WriteCommon">
+          <DisplayName>Azure Active Directory</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <PersistedClaims>
             <PersistedClaim ClaimTypeReferenceId="displayName" />
             <PersistedClaim ClaimTypeReferenceId="givenName" />
@@ -127,17 +190,5 @@
       </TechnicalProfiles>
     </ClaimsProvider>
   </ClaimsProviders>
-
-  <UserJourneys>
-    <UserJourney Id="B2CSignUpOrSignInWithPassword">
-      <OrchestrationSteps>
-        <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signinandsignupwithpassword">
-          <ClaimsProviderSelections>
-            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
-          </ClaimsProviderSelections>
-        </OrchestrationStep>
-      </OrchestrationSteps>
-    </UserJourney>
-  </UserJourneys>
-
+  <!-- <UserJourneys><UserJourney Id="B2CSignUpOrSignInWithPassword"><OrchestrationSteps><OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signinandsignupwithpassword"><ClaimsProviderSelections><ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" /></ClaimsProviderSelections></OrchestrationStep></OrchestrationSteps></UserJourney></UserJourneys> -->
 </TrustFrameworkPolicy>

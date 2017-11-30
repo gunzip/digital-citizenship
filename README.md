@@ -51,14 +51,43 @@ in the `tfvars.json` file relative to the target deploy environment
 (ie. [production](./infrastructure/env/production/tfvars.json) or 
 [development](./infrastructure/env/development/tfvars.json)).
 
+#### Step 2 - Add sign and encyption key for policies 
+
+Add signing and encryption keys to your B2C tenant for use by custom policies.
+
+- Open the "Identity Experience Framework" blade in your Azure AD B2C tenant settings
+- Select "Policy Keys" to view the keys available in your tenant
+- Create `B2C_1A_TokenSigningKeyContainer`:
+  - Select "Add"
+    - Select "Generate"
+    - For Name, use "TokenSigningKeyContainer" 
+    - For Key type, use "RSA"
+    - For Dates, use the defaults
+    - For Key usage, use "Signature"
+    - Select Create
+- Create `B2C_1A_TokenEncryptionKeyContainer`:
+  - Select "Add"
+    - Select "Generate"
+    - For Name, use "TokenEncryptionKeyContainer" 
+    - For Key type, use "RSA"
+    - For Dates, use the defaults
+    - For Key usage, use "Encryption"
+    - Select Create
+
 #### Step 2 - Add an ADB2C Sign-in / Sing-up policy
 
 To be able to sign-in and sign-up users through ADB2C you need
-to create a *Sign-in / Sign-up Policy*: go the Azure ADB2C blade in the Azure portal
-and upload the file [`infrastructure/adb2c/B2C_1_SignUpIn.xml`](./infrastructure/adb2c/B2C_1_SignUpIn.xml)
-in the policy blade:
+to create a *Sign-in / Sign-up Policy*.
 
-https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-reference-policies
+Go the Azure ADB2C blade in the Azure portal -> "Identity experience framework" -> "Upload policy".
+
+Upload the policy files in the following order:
+
+1. [`infrastructure/adb2c/TrustFrameworkBase.xml`](./infrastructure/adb2c/TrustFrameworkBase.xml)
+1. [`infrastructure/adb2c/TrustFrameworkExtensions.xml`](./infrastructure/adb2c/TrustFrameworkExtensions.xml)
+1. [`infrastructure/adb2c/SignUpOrSignIn.xml`](./infrastructure/adb2c/SignUpOrSignIn.xml)
+
+ref: https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-reference-policies
 
 #### Step 3 - Add 2 Applications in the Azure ADB2C tenant
 
