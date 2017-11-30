@@ -1,5 +1,5 @@
 /**
- * Run this task from the command line to set up deployment
+ * Run this task from the command line to sync the source code
  * from the GitHub repository to the Azure App Service
  * running the developer portal onboarding facilities:
  * 
@@ -32,22 +32,10 @@ export const run = async (config: IResourcesConfiguration) => {
     loginCreds.subscriptionId
   );
 
-  const siteSourceControl = {
-    branch: config.app_service_portal_git_branch,
-    deploymentRollbackEnabled: true,
-    // FIXME: setting `isManualIntegration: false` will fail trying to send an email
-    // to the service principal user. I guess this is a bug in the Azure APIs
-    isManualIntegration: true,
-    isMercurial: false,
-    repoUrl: config.app_service_portal_git_repo,
-    type: config.app_service_portal_scm_type
-  };
-
-  // Create git integration
-  return webSiteClient.webApps.createOrUpdateSourceControl(
+  // Sync git to app service
+  return webSiteClient.webApps.syncRepository(
     config.azurerm_resource_group,
-    config.azurerm_app_service_portal,
-    siteSourceControl
+    config.azurerm_app_service_portal
   );
 };
 

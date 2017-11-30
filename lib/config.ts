@@ -62,6 +62,11 @@ export interface IResourcesConfiguration {
   readonly functionapp_git_branch: string;
   readonly functionapp_scm_type: string;
   readonly functionapp_nodejs_version: string;
+  readonly azurerm_app_service_plan_portal: string;
+  readonly azurerm_app_service_portal: string;
+  readonly app_service_portal_git_repo: string;
+  readonly app_service_portal_git_branch: string;
+  readonly app_service_portal_scm_type: string;
   readonly azurerm_functionapp_storage_account: string;
   readonly azurerm_application_insights: string;
   readonly azurerm_log_analytics: string;
@@ -150,6 +155,8 @@ export const readConfig = (
       functionapp_nodejs_version: config.functionapp_nodejs_version,
       azurerm_functionapp_storage_account:
         config.azurerm_functionapp_storage_account,
+      azurerm_app_service_plan_portal: config.azurerm_app_service_plan_portal,
+      azurerm_app_service_portal: config.azurerm_app_service_portal,
       azurerm_application_insights: config.azurerm_application_insights,
       azurerm_log_analytics: config.azurerm_log_analytics,
       azurerm_apim: config.azurerm_apim,

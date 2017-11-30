@@ -148,7 +148,7 @@ export DEV_PORTAL_EXT_CLIENT_SECRET=<Application Key>
 1. Create an [Active Directory Principal](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-application-objects)
 and get `CLIENT_ID`, `CLIENT_SECRET`, `TENANT_ID` (the Active Directory Id) and Azure `SUBSCRIPTION_ID`.
 
-Set up environment variables to let Terrform and tasks authenticate against the Azure subscription:
+Set up the following environment variables to let Terrform and tasks authenticate against the Azure subscription:
 
 ```
 export ARM_SUBSCRIPTION_ID=<subscription Id>
@@ -157,17 +157,13 @@ export ARM_CLIENT_SECRET=<service principal client secret (key)>
 export ARM_TENANT_ID=<Active Directory domain Id>
 ```
 
-1. Set deploy `ENVIRONMENT` variable value; can be any between `production` or `development`: 
+1. Set the `ENVIRONMENT` variable value; can be any between `production` or `development`: 
 
 ```
 set ENVIRONMENT=production
 ```
 
 1. Edit configuration file for the choosen environment `infrastructure/$ENVIRONMENT/tfvars.json`
-
-1. (optional) Edit common settings `infrastructure/env/common/config.js`
-
-1. (optional) Edit Terraform configuration `infrastructure/azure.cf`
 
 1. Run the following commands:
 
@@ -199,7 +195,7 @@ these ones are created by NodeJS scripts (`infrastructure/tasks`) that provision
 
 ### Finishing the installation
 
-Some tasks cannot be carried out programmatically and require a manual intervent 
+Some tasks cannot be carried out programmatically and require a manual intervention 
 by the Azure subscription administrator through the Azure portal interface.
 
 #### Activate "Managed Service Identity" for the onboarding Web App Service
@@ -236,6 +232,33 @@ The Terraform state is shared through an Azure
 Before running any command involving Terraform you must request access
 to the Azure container to the project administrators (or use your own
 for testing purposes when deploying to a staging resource group).
+
+## Example environment configuration
+
+Make sure you have all the following environment variables
+set up before launching any npm task to provision Azure resources.
+
+```bash
+# May be development or production
+export ENVIRONMENT="development"
+
+# Azure service principal credentials (main AD tenant)
+export ARM_SUBSCRIPTION_ID="XXXXX-XXXX-XXXX-XXXX-dXXXXXXXXX"
+export ARM_CLIENT_ID="XXXXXXX-XXXX-XXXX-XXX-XXXXXXXXX"
+export ARM_CLIENT_SECRET="XXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+export ARM_TENANT_ID="XXXXXXX-XXXXX-XXXX-XXXX-XXXXXXXXXXX"
+
+# Client credentials for dev-portal-app ADB2C App
+export DEV_PORTAL_CLIENT_ID="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
+export DEV_PORTAL_CLIENT_SECRET="XXXXXXXXXXXXXXXXXXXXXXXX"
+
+# Client credentials for dev-portal-ext ADB2C App
+export DEV_PORTAL_EXT_CLIENT_ID="XXXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
+export DEV_PORTAL_EXT_CLIENT_SECRET="XXXXXXXXXXXXXXXXXXXXXXXX"
+
+# Mail service API key
+export SENDGRID_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+```
 
 ## Example output
 
@@ -275,55 +298,28 @@ successfully deployed cosmsodb database and collections
 
 ```
 
-## Example environment configuration
-
-Make sure you have all the following environment variables
-set up before launching any npm task to provision Azure resources.
-
-```bash
-# May be development or production
-export ENVIRONMENT="development"
-
-# Azure service principal credentials (main AD tenant)
-export ARM_SUBSCRIPTION_ID="XXXXX-XXXX-XXXX-XXXX-dXXXXXXXXX"
-export ARM_CLIENT_ID="XXXXXXX-XXXX-XXXX-XXX-XXXXXXXXX"
-export ARM_CLIENT_SECRET="XXXXXXXXXXXXXXXXXXXXXXXXXXXX="
-export ARM_TENANT_ID="XXXXXXX-XXXXX-XXXX-XXXX-XXXXXXXXXXX"
-
-# Client credentials for dev-portal-app ADB2C App
-export DEV_PORTAL_CLIENT_ID="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
-export DEV_PORTAL_CLIENT_SECRET="XXXXXXXXXXXXXXXXXXXXXXXX"
-
-# Client credentials for dev-portal-ext ADB2C App
-export DEV_PORTAL_EXT_CLIENT_ID="XXXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
-export DEV_PORTAL_EXT_CLIENT_SECRET="XXXXXXXXXXXXXXXXXXXXXXXX"
-
-# Mail service API key
-export SENDGRID_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-```
-
 ## Deploy
 
 When you are ready to deploy a new release, you need to synch 
-the source code in the Git repository to the App Service (or Functions) one.
+the source code in the Git repository to the App Service (or to Azure Functions).
 
-You may opt to configure continuos deployment from a Git branch,
+You may opt to configure continuos deployment from a GitHub branch,
 automatically triggering a new deploy through a webhook when the changes are pushed.
-To do that you must give your Azure subscription access to the
-Git account in order to set up the webhook:
+To do that you must give your Azure subscription access to your
+GitHub account in order to set up the webhook:
 
 (https://docs.microsoft.com/en-us/azure/azure-functions/functions-continuous-deployment
 
 We chose to not setup this kind of continous deployment, but
-to provide scripts that, when launched, will synch the code from the
-Git repository to Azure services.
+to provide scripts that, when launched from the command line, 
+will synch the code from the GitHub repository to Azure services.
 
-To deploy the developer portal web application run:
+To deploy new code to the developer portal web application run:
 ```
 yarn devapp:sync
 ```
 
-To deploy code to Azure Functions run:
+To deploy new code to Azure Functions run:
 ```
 yarn functions:sync
 ```
