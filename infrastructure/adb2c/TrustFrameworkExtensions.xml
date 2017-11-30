@@ -1,8 +1,18 @@
-<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="agidweb.onmicrosoft.com" TenantObjectId="b497aced-4e96-4dde-aea8-7c31d5d00c81" PolicyId="B2C_1_SignUpIn" PublicPolicyUri="http://agidweb.onmicrosoft.com/">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TrustFrameworkPolicy 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
+  PolicySchemaVersion="0.3.0.0" 
+  TenantId="yourtenant.onmicrosoft.com" 
+  PolicyId="B2C_1A_TrustFrameworkExtensions" 
+  PublicPolicyUri="http://yourtenant.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
+  
   <BasePolicy>
-    <TenantId>agidweb.onmicrosoft.com</TenantId>
-    <PolicyId>base-v1</PolicyId>
+    <TenantId>yourtenant.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
   </BasePolicy>
+
   <BuildingBlocks>
     <ClaimsSchema>
       <ClaimType Id="displayName">
@@ -26,13 +36,31 @@
         <Restriction MergeBehavior="Append" />
       </ClaimType>
     </ClaimsSchema>
+    <ContentDefinitions>
+      <ContentDefinition Id="api.error">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+      </ContentDefinition>
+      <ContentDefinition Id="api.phonefactor1.1">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+      </ContentDefinition>
+      <ContentDefinition Id="api.signinandsignupwithpassword">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+      </ContentDefinition>
+      <ContentDefinition Id="api.localaccountsignup1.1">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+      </ContentDefinition>
+      <ContentDefinition Id="api.selfasserted1.1">
+        <LoadUri>https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html</LoadUri>
+      </ContentDefinition>
+    </ContentDefinitions>
   </BuildingBlocks>
+
   <ClaimsProviders>
     <ClaimsProvider>
       <DisplayName>PhoneFactor</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="PhoneFactor-Common">
-          <EnabledForUserJourneys>OnClaimsExistence</EnabledForUserJourneys>
+          <EnabledForUserJourneys>Always</EnabledForUserJourneys>
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
@@ -99,6 +127,7 @@
       </TechnicalProfiles>
     </ClaimsProvider>
   </ClaimsProviders>
+
   <UserJourneys>
     <UserJourney Id="B2CSignUpOrSignInWithPassword">
       <OrchestrationSteps>
@@ -110,30 +139,5 @@
       </OrchestrationSteps>
     </UserJourney>
   </UserJourneys>
-  <RelyingParty>
-    <DefaultUserJourney ReferenceId="B2CSignUpOrSignInWithPassword" />
-    <UserJourneyBehaviors>
-      <SingleSignOn Scope="Tenant" />
-      <SessionExpiryType>Rolling</SessionExpiryType>
-      <SessionExpiryInSeconds>86400</SessionExpiryInSeconds>
-    </UserJourneyBehaviors>
-    <TechnicalProfile Id="PolicyProfile">
-      <DisplayName>PolicyProfile</DisplayName>
-      <Protocol Name="OpenIdConnect" />
-      <OutputClaims>
-        <OutputClaim ClaimTypeReferenceId="emails" />
-        <OutputClaim ClaimTypeReferenceId="objectId" />
-        <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub" />
-        <OutputClaim ClaimTypeReferenceId="newUser" />
-        <OutputClaim ClaimTypeReferenceId="surname" />
-        <OutputClaim ClaimTypeReferenceId="givenName" />
-        <OutputClaim ClaimTypeReferenceId="identityProvider" />
-        <OutputClaim ClaimTypeReferenceId="extension_Organization" />
-        <OutputClaim ClaimTypeReferenceId="extension_Service" />
-        <OutputClaim ClaimTypeReferenceId="extension_Department" />
-        <OutputClaim ClaimTypeReferenceId="trustFrameworkPolicy" Required="true" DefaultValue="{policy}" />
-      </OutputClaims>
-      <SubjectNamingInfo ClaimType="sub" />
-    </TechnicalProfile>
-  </RelyingParty>
+
 </TrustFrameworkPolicy>

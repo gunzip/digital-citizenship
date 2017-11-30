@@ -1,47 +1,40 @@
-// Configure ADB2C authentication for API management
-// apiClient.identityProvider.createOrUpdate()
+/**
+ * Configure ADB2C authentication for API management
+ */
 
 // tslint:disable:no-console
 // tslint:disable:no-any
-
-// tslint:disable
 
 import { login } from "../../lib/login";
 
 import { IResourcesConfiguration, readConfig } from "../../lib/config";
 
-// import apiManagementClient = require("azure-arm-apimanagement");
-import graphManagementClient = require("azure-graph");
+import apiManagementClient = require("azure-arm-apimanagement");
+
+const adb2cClientId = process.env.DEV_PORTAL_CLIENT_ID;
+const adb2cClientSecret = process.env.DEV_PORTAL_CLIENT_SECRET;
 
 export const run = async (config: IResourcesConfiguration) => {
-  const loginCreds = await login({ tokenAudience: "graph" });
+  const loginCreds = await login();
 
-  console.log("Create Application for tenant " + config.azurerm_adb2c_tenant);
-
-  const graphClient = new graphManagementClient(
+  const apiClient = new apiManagementClient(
     (loginCreds as any).creds,
-    config.azurerm_adb2c_tenant
+    loginCreds.subscriptionId
   );
 
-  const application = await graphClient.applications.create({
-    availableToOtherTenants: false,
-    displayName: "app-developer-portalx",
-    identifierUris: [
-      `https://${config.azurerm_adb2c_tenant}/app-developer-portalx`
-    ],
-    oauth2AllowImplicitFlow: true,
-    replyUrls: [
-      `https://${config.azurerm_apim}.portal.azure-api.net/signin-aad`
-    ]
-  });
-
-  console.log(application);
-
-  // const keys = await graphClient.applications.listKeyCredentials(
-  //   application.objectId
-  // );
-  // console.log(keys);
-  // }
+  return apiClient.identityProvider.createOrUpdate(
+    config.azurerm_resource_group,
+    config.azurerm_apim,
+    "aadB2C",
+    {
+      allowedTenants: [config.azurerm_adb2c_tenant],
+      clientId: adb2cClientId,
+      clientSecret: adb2cClientSecret,
+      identityProviderContractType: "aadB2C",
+      signinPolicyName: config.azurerm_adb2c_policy,
+      signupPolicyName: config.azurerm_adb2c_policy
+    }
+  );
 };
 
 readConfig(process.env.ENVIRONMENT)
