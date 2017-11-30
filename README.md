@@ -102,12 +102,13 @@ Multifactor authentication
 
 Page UI customization
 - Set up for every page the following custom page URI:
+
   https://teamdigitale.github.io/digital-citizenship-onboarding/unified.html
-  - Save the policy
-  - Customize the "Multifactor authentication page"
-  - Open "Local account sign-up page"
-    - Mark all fields as required (optional = no)
-    - Reorder fields and rename labels at wish
+- Save the policy
+- Customize the "Multifactor authentication page"
+- Open "Local account sign-up page"
+  - Mark all fields as required (optional = no)
+  - Reorder fields and rename labels at wish
 
 ref: https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-reference-policies
 
