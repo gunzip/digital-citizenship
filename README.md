@@ -118,9 +118,9 @@ https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c
 1. Register an ADB2C Application `dev-portal-app`
 
 Set the return URL of this application to:
-https://`${config.azurerm\_apim}`.portal.azure-api.net/signin-aad
+https://`${config.azurerm_apim}`.portal.azure-api.net/signin-aad
 
-(replace `${config.azurerm\_apim}` with the actual value in your tfvars.json file)
+(replace `${config.azurerm_apim}` with the actual value in your tfvars.json file)
 
 Generate a key, then set the two environment variables:
 
@@ -132,9 +132,9 @@ export DEV_PORTAL_CLIENT_SECRET=<Application Key>
 1. Register an ADB2C Application `dev-portal-ext`
 
 Set the return URL of this application to:
-https://`${config.azurerm\_app\_service\_portal}`.azurewebsites.net/auth/openid/return
+https://`${config.azurerm_app_service_portal}`.azurewebsites.net/auth/openid/return
 
-(replace `${config.azurerm\_app\_service\_portal}` with the actual value in your tfvars.json file)
+(replace `${config.azurerm_app_service_portal}` with the actual value in your tfvars.json file)
 
 Generate a key, then set the two environment variables:
 
